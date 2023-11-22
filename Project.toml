@@ -1,0 +1,13 @@
+name = "LaskaCore"
+uuid = "9ad29ce2-7782-4744-ab48-6ef9cc0286bb"
+authors = ["Elias Sjölin <elias.sjolin@gmail.com>"]
+version = "1.0.0-DEV"
+
+[compat]
+julia = "1"
+
+[extras]
+Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
+
+[targets]
+test = ["Test"]
