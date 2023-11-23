@@ -17,6 +17,21 @@ export AbstractExperiment, getcluster, ntrigs, clusterids, triggertimes, cluster
 export PhyOutput
 export RelativeSpikes, relativespecs, stimtimes
 
+# Helper functions
+include("helpers/timeconv.jl")
+include("helpers/rounding.jl")
+include("helpers/spikesatdepth.jl")
+export spikesatdepth
+include("helpers/normalize.jl")
+include("helpers/unpackvector.jl")
+include("helpers/isntempty.jl")
+include("helpers/findmax.jl")
+include("helpers/isi.jl")
+
+# Work around triggers
+include("triggers/relativespikes.jl")
+export relativespikes
+
 # Importing
 include("import/importphy.jl")
 # Export function for importing phy output
