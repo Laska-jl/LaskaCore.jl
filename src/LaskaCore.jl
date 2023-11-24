@@ -41,4 +41,11 @@ include("import/readglx.jl")
 # Export glx reading functions
 export spikemmap, tovolts, tovolts!, parseglxmeta
 
+# Summarizing statistics
+include("summarize/cv2.jl")
+include("summarize/mad.jl")
+include("summarize/frequency.jl")
+include("summarize/relativefrequency.jl")
+export cv2, cv2mean, mad, relativefrequency, frequency
+
 end
