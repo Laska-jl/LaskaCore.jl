@@ -10,6 +10,7 @@ Mmap = "a63ad114-7e13-5084-954f-fe012c677804"
 NPZ = "15e1cf62-19b3-5cfa-8e77-841668bca605"
 
 [compat]
+DataFrames = "1"
 NPZ = "0.4"
 CSV = "0.10"
 julia = "1"
