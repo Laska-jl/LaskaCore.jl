@@ -66,14 +66,14 @@ end
 
 function sampleratetoms(vec::Vector{T}, samplerate::U) where {T<:Real,U<:Real}
     fac = 1 / (samplerate * 0.001)
-    out::Vector{Float64} = Vector(undef, length(vec))
-    sampleratetoms!(out, vec, fac)
+    out::Vector{Float64} = deepcopy(vec)
+    sampleratetoms!(out, fac)
     return out
 end
 
-function sampleratetoms!(out::Vector{Float64}, in::Vector{T}, factor::Float64) where {T<:Real}
-    @assert length(out) == length(in)
-    @inbounds for n in eachindex(in)
-        out[n] = in[n] * factor
+function sampleratetoms!(out::Vector{Float64}, factor::Float64) where {T<:Real}
+    @inbounds for n in eachindex(out)
+        out[n] *= factor
     end
 end
+
