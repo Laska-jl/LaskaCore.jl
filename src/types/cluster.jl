@@ -29,6 +29,11 @@ Struct for holding a single Cluster.
 
 Direct field access is **not** recommended. Basic interface functions include:
 
+- [`LaskaCore.id`](@ref) -- Returns the Cluster id.
+- [`LaskaCore.nspikes`](@ref) -- Returns the number of spikes in the cluster (Based off length of the `spiketimes` field).
+- [`LaskaCore.info`](@ref) -- Returns the info of the `Cluster` from "cluster_info.tsv" as a Dict.
+- [`LaskaCore.spiketimes`](@ref) -- Returns a Vector containing all spiketimes of the `Cluster`.
+
 
 """
 struct Cluster{T} <: AbstractCluster{T}
@@ -98,6 +103,11 @@ Struct for holding a cluster and its spiketimes relative to triggers.
 Similar to `Cluster{T}` except that the field `spiketimes` is a `Vector{Vector{T}}` where each vector represents trigger #n.
 
 Direct field access is **not** recommended. Basic interface functions include:
+
+- [`LaskaCore.id`](@ref) -- Returns the Cluster id.
+- [`LaskaCore.nspikes`](@ref) -- Returns the number of spikes in the cluster (Based off length of the `spiketimes` field).
+- [`LaskaCore.info`](@ref) -- Returns the info of the `Cluster` from "cluster_info.tsv" as a Dict.
+- [`LaskaCore.spiketimes`](@ref) -- Returns a Vector containing all spiketimes of the `Cluster`.
 
 """
 struct RelativeCluster{T} <: AbstractCluster{T}
