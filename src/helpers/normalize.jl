@@ -12,7 +12,7 @@
 Returns a min-max normalized version of `vec`. Defaults to 0-1 which can be customized with (`min`/`max`).
 Custom values replacing the actual min/max values in the vector may also be supplied in a Tuple with exactly 2 entries.
 
-See [`normalize!`](@ref) for an in-place version
+See [`LaskaCore.normalize!`](@ref) for an in-place version
 """
 function normalize(vec::Vector{T}) where {T<:Real}
     out::Vector{Float64} = deepcopy(vec)

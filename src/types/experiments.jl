@@ -1,4 +1,4 @@
-#------------------------------------------------------------- 
+# 
 # Container(s) for all Clusters that are part of an experiment
 #-------------------------------------------------------------
 
@@ -23,16 +23,16 @@ abstract type AbstractExperiment{T} end
         meta::Dict{SubString{String},SubString{String}}
     end
 
-Struct for holding Kilosort output preprocessed in Phy. Should be instantiated using the outer constructor [`Laska.importphy`](@ref).
+Struct for holding Kilosort output preprocessed in Phy. Should be instantiated using the outer constructor [`LaskaCore.importphy`](@ref).
 
 Direct field access is **not** recommended. Basic interface functions include:
 
-- [`Laska.clusterids`](@ref) -- Returns all cluster ID:s as a Vector.
-- [`Laska.getcluster`](@ref) -- Returns a specific [`Laska.Cluster`](@ref).
-- [`Laska.clustervector`](@ref) -- Returns all [`Laska.Cluster`](@ref):s.
-- [`Laska.getmeta`](@ref) -- Returns the spikeGLX meta as a dict or a specific entry.
-- [`Laska.triggertimes`](@ref) -- Returns the trigger event times.
-- [`Laska.ntrigs`](@ref) -- Returns the length of the trigger event time Vector.
+- [`LaskaCore.clusterids`](@ref) -- Returns all cluster ID:s as a Vector.
+- [`LaskaCore.getcluster`](@ref) -- Returns a specific [`LaskaCore.Cluster`](@ref).
+- [`LaskaCore.clustervector`](@ref) -- Returns all [`LaskaCore.Cluster`](@ref):s.
+- [`LaskaCore.getmeta`](@ref) -- Returns the spikeGLX meta as a dict or a specific entry.
+- [`LaskaCore.triggertimes`](@ref) -- Returns the trigger event times.
+- [`LaskaCore.ntrigs`](@ref) -- Returns the length of the trigger event time Vector.
 
 """
 mutable struct PhyOutput{T} <: AbstractExperiment{T}
@@ -53,11 +53,11 @@ end
         specs::Dict{String,T}
     end
 
-Similar to [`Laska.PhyOutput`](@ref). However, instead of [`Laska.Cluster`](@ref)s, [`Laska.RelativeCluster`](@ref)s are used.
+Similar to [`LaskaCore.PhyOutput`](@ref). However, instead of [`LaskaCore.Cluster`](@ref)s, [`LaskaCore.RelativeCluster`](@ref)s are used.
 In these, spiketimes relative to trigger event(s) instead of absolute spiketimes are used.              
 Additionally contains the fields:
 
-- `stimtrain::Dict{String,T}` -- Dict in the format `name/id` => `time`. `time` should be relative to trigger event. Specified by the user on creation of struct using [`Laska.relativespikes`](@ref).
+- `stimtrain::Dict{String,T}` -- Dict in the format `name/id` => `time`. `time` should be relative to trigger event. Specified by the user on creation of struct using [`LaskaCore.relativespikes`](@ref).
 - `specs::Dict{String,T}` -- Dict containing the time before/after (`back`/`forward`) trigger events that spikes are included; as well as number of trigger events (`ntrig`).
 
 """

@@ -93,6 +93,21 @@ Extract trigger event indices.
 
 Assumes that `t` is 0 except at trigger events. Returns only the *first* index at each trigger event(ie series of sequential nonzero indices).
 
+# Example
+
+```julia
+
+# Example "triggerchannel"
+# * = Indices that will be returned, ^ = trigger
+#
+
+#            *                 *
+v = [0,0,0,0,1,1,1,1,0,0,0,0,0,1,1,1,1,1,1]
+#            ^ ^ ^ ^           ^ ^ ^ ^ ^ ^ 
+
+LaskaCore.gettrig(v)
+```
+
 """
 function gettrig(t::Vector{T}) where {T<:Real}
     r::Vector{Int64} = findall(!iszero, t)

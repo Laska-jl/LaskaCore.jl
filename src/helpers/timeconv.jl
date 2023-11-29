@@ -46,7 +46,6 @@ function mstosamplerate!(out::Vector{Float64}, in::Vector{T}, factor::Float64) w
 end
 
 
-# FIX: reverse argument order
 
 
 """
