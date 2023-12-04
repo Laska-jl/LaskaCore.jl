@@ -32,7 +32,7 @@ end
 # applied (:fr).
 filtertuple = (:fr, filterfunc)
 
-result = importphy("phyoutput_directory", "glxoutput_directory", "direct_path_to_triggerfile", filtertuple)
+result = importphy("phyoutput_directory", filtertuple, "glxoutput_directory", "direct_path_to_triggerfile")
 ```
 
 """
@@ -65,9 +65,9 @@ function importphy(phydir::String, glxdir::String="", triggerpath::String=""; in
     idvec = info[!, "cluster_id"]
 
     for id in idvec
-        inf::Dict{String,String} = Dict()
+        inf::Dict{String,Any} = Dict()
         for col in names(info)
-            inf[col] = string(filter(:cluster_id => x -> x == id, info)[!, col][1])
+            inf[col] = filter(:cluster_id => x -> x == id, info)[!, col][1]
         end
         push!(clustervec, Cluster(id, inf, sort!(resdict[id])))
     end
@@ -142,7 +142,7 @@ function importphy(phydir::String, filters::Tuple{Symbol,Function}, glxdir::Stri
     idvec = info[!, "cluster_id"]
 
     for id in idvec
-        inf::Dict{String,String} = Dict()
+        inf::Dict{String,Any} = Dict()
         for col in names(info)
             inf[col] = string(filter(:cluster_id => x -> x == id, info)[!, col][1])
         end
@@ -215,9 +215,9 @@ function importphy(phydir::String, filters::Tuple{Tuple{Symbol,Function}}, glxdi
     idvec = info[!, "cluster_id"]
 
     for id in idvec
-        inf::Dict{String,String} = Dict()
+        inf::Dict{String,Any} = Dict()
         for col in names(info)
-            inf[col] = string(filter(:cluster_id => x -> x == id, info)[!, col][1])
+            inf[col] = filter(:cluster_id => x -> x == id, info)[!, col][1]
         end
         push!(clustervec, Cluster(id, inf, sort!(resdict[id])))
     end
