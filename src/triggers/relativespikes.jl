@@ -42,7 +42,7 @@ function relativespikes(p::PhyOutput{T}, stimtrain::Dict{String,T}, back::T, for
         )
         push!(idvec, id(cluster))
     end
-    return RelativeSpikes(idvec, clustervec, triggertimes(p), getmeta(p), stimtrain, specs)
+    return RelativeSpikes(idvec, clustervec, triggertimes(p), getmeta(p), info(p), stimtrain, specs)
 end
 
 

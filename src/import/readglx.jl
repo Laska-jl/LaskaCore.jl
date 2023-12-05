@@ -53,6 +53,7 @@ end
 
 
 function tovolts!(out::Matrix{Float32}, in::Matrix{Int16}, cfactor::Float32)
+    @assert length(out) == length(in)
     for i in eachindex(out)
         out[i] = in[i] * cfactor
     end

@@ -21,7 +21,7 @@ abstract type AbstractCluster{T} end
 
     struct Cluster{T} <: AbstractCluster{T}
         id::Int64
-        info::Dict{String,Any}
+        info::SubDataFrame
         spiketimes::Vector{T}
     end
 
@@ -31,14 +31,14 @@ Direct field access is **not** recommended. Basic interface functions include:
 
 - [`LaskaCore.id`](@ref) -- Returns the Cluster id.
 - [`LaskaCore.nspikes`](@ref) -- Returns the number of spikes in the cluster (Based off length of the `spiketimes` field).
-- [`LaskaCore.info`](@ref) -- Returns the info of the `Cluster` from "cluster_info.tsv" as a Dict.
+- [`LaskaCore.info`](@ref) -- Returns the info of the `Cluster` from "cluster_info.tsv" as a `SubDataFrame` row. This is a *view* of the DataFrame in the parent `Experiment`.
 - [`LaskaCore.spiketimes`](@ref) -- Returns a Vector containing all spiketimes of the `Cluster`.
 
 
 """
 struct Cluster{T} <: AbstractCluster{T}
     id::Int64
-    info::Dict{String,Any}
+    info::SubDataFrame
     spiketimes::Vector{T}
 end
 
@@ -75,7 +75,7 @@ function info(cluster::T) where {T<:AbstractCluster}
 end
 
 function info(cluster::T, var::String) where {T<:AbstractCluster}
-    return cluster.info[var]
+    return cluster.info[1, var]
 end
 
 
@@ -94,7 +94,7 @@ end
 """
     struct RelativeCluster{T} <: AbstractCluster{T}
         id::Int64
-        info::Dict{String,String}
+        info::SubDataFrame
         spiketimes::Vector{Vector{T}}
     end
 
@@ -106,12 +106,12 @@ Direct field access is **not** recommended. Basic interface functions include:
 
 - [`LaskaCore.id`](@ref) -- Returns the Cluster id.
 - [`LaskaCore.nspikes`](@ref) -- Returns the number of spikes in the cluster (Based off length of the `spiketimes` field).
-- [`LaskaCore.info`](@ref) -- Returns the info of the `Cluster` from "cluster_info.tsv" as a Dict.
+- [`LaskaCore.info`](@ref) -- Returns the info of the `Cluster` from "cluster_info.tsv" as a `SubDataFrame`. This is a *view* of the `info` `DataFrame` from the parent `Experiment`.
 - [`LaskaCore.spiketimes`](@ref) -- Returns a Vector containing all spiketimes of the `Cluster`.
 
 """
 struct RelativeCluster{T} <: AbstractCluster{T}
     id::Int64
-    info::Dict{String,Any}
+    info::SubDataFrame
     spiketimes::Vector{Vector{T}}
 end

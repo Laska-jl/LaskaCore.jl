@@ -40,6 +40,7 @@ mutable struct PhyOutput{T} <: AbstractExperiment{T}
     clusters::Vector{Cluster{T}}
     trigtimes::Vector{T}
     meta::Dict{SubString{String},SubString{String}}
+    info::DataFrame
 end
 
 
@@ -49,6 +50,7 @@ end
         clusters::Vector{RelativeCluster{T}}
         trigtimes::Vector{T}
         meta::Dict{SubString{String},SubString{String}}
+        info::DataFrame
         stimtrain::Dict{String,T}
         specs::Dict{String,T}
     end
@@ -66,6 +68,7 @@ mutable struct RelativeSpikes{T} <: AbstractExperiment{T}
     clusters::Vector{RelativeCluster{T}}
     trigtimes::Vector{T}
     meta::Dict{SubString{String},SubString{String}}
+    info::DataFrame
     stimtrain::Dict{String,T}
     specs::Dict{String,T}
 end
@@ -140,6 +143,14 @@ end
 
 function getmeta(experiment::T) where {T<:AbstractExperiment}
     return experiment.meta
+end
+
+function info(experiment::T) where {T<:AbstractExperiment}
+    return experiment.info
+end
+
+function info(experiment::T, var::String) where {T<:AbstractExperiment}
+    return experiment.info[!, var]
 end
 
 # RelativeSpikes-specific functions

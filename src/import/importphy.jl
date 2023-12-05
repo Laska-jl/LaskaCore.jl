@@ -65,10 +65,7 @@ function importphy(phydir::String, glxdir::String="", triggerpath::String=""; in
     idvec = info[!, "cluster_id"]
 
     for id in idvec
-        inf::Dict{String,Any} = Dict()
-        for col in names(info)
-            inf[col] = filter(:cluster_id => x -> x == id, info)[!, col][1]
-        end
+        inf = @view info[findall(x -> x == id, info[!, "cluster_id"]), :]
         push!(clustervec, Cluster(id, inf, sort!(resdict[id])))
     end
 
@@ -105,7 +102,7 @@ function importphy(phydir::String, glxdir::String="", triggerpath::String=""; in
         metadict = Dict{SubString{String},SubString{String}}()
     end
 
-    return PhyOutput(idvec, clustervec, triggers, metadict)
+    return PhyOutput(idvec, clustervec, triggers, metadict, info)
 end
 
 
@@ -142,10 +139,7 @@ function importphy(phydir::String, filters::Tuple{Symbol,Function}, glxdir::Stri
     idvec = info[!, "cluster_id"]
 
     for id in idvec
-        inf::Dict{String,Any} = Dict()
-        for col in names(info)
-            inf[col] = string(filter(:cluster_id => x -> x == id, info)[!, col][1])
-        end
+        inf = @view info[findall(x -> x == id, info[!, "cluster_id"]), :]
         push!(clustervec, Cluster(id, inf, sort!(resdict[id])))
     end
 
@@ -175,7 +169,7 @@ function importphy(phydir::String, filters::Tuple{Symbol,Function}, glxdir::Stri
     else
         metadict = Dict{SubString{String},SubString{String}}()
     end
-    return PhyOutput(idvec, clustervec, triggers, metadict)
+    return PhyOutput(idvec, clustervec, triggers, metadict, info)
 end
 
 
@@ -215,10 +209,7 @@ function importphy(phydir::String, filters::Tuple{Tuple{Symbol,Function}}, glxdi
     idvec = info[!, "cluster_id"]
 
     for id in idvec
-        inf::Dict{String,Any} = Dict()
-        for col in names(info)
-            inf[col] = string(filter(:cluster_id => x -> x == id, info)[!, col][1])
-        end
+        inf = @view info[findall(x -> x == id, info[!, "cluster_id"]), :]
         push!(clustervec, Cluster(id, inf, sort!(resdict[id])))
     end
 
@@ -248,7 +239,7 @@ function importphy(phydir::String, filters::Tuple{Tuple{Symbol,Function}}, glxdi
     else
         metadict = Dict{SubString{String},SubString{String}}()
     end
-    return PhyOutput(idvec, clustervec, triggers, metadict)
+    return PhyOutput(idvec, clustervec, triggers, metadict, info)
 end
 
 
