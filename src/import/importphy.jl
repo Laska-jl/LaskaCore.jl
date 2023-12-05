@@ -217,7 +217,7 @@ function importphy(phydir::String, filters::Tuple{Tuple{Symbol,Function}}, glxdi
     for id in idvec
         inf::Dict{String,Any} = Dict()
         for col in names(info)
-            inf[col] = filter(:cluster_id => x -> x == id, info)[!, col][1]
+            inf[col] = string(filter(:cluster_id => x -> x == id, info)[!, col][1])
         end
         push!(clustervec, Cluster(id, inf, sort!(resdict[id])))
     end
