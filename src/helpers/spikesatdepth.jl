@@ -21,7 +21,7 @@ The included depths are controlled by the type of the `depth` variable:
 function spikesatdepth(p::PhyOutput{T}, depth::N) where {T<:Real} where {N<:Real}
     out::Vector{T} = T[]
     for cluster in clustervector(p)
-        if parse(N, info(cluster, "depth")) == depth
+        if info(cluster, "depth") == depth
             out = vcat(out, spiketimes(cluster))
         end
     end
@@ -31,7 +31,7 @@ end
 function spikesatdepth(p::PhyOutput{T}, depth::NTuple{2,N}) where {T<:Real} where {N<:Real}
     out::Vector{T} = T[]
     for cluster in clustervector(p)
-        if depth[1] <= parse(N, info(cluster, "depth")) <= depth[2]
+        if depth[1] <= info(cluster, "depth") <= depth[2]
             out = vcat(out, spiketimes(cluster))
         end
     end
@@ -42,7 +42,7 @@ end
 function spikesatdepth(p::PhyOutput{T}, depth::Set{N}) where {T<:Real} where {N<:Real}
     out::Vector{T} = T[]
     for cluster in clustervector(p)
-        if parse(N, info(cluster, "depth")) in depth
+        if info(cluster, "depth") in depth
             out = vcat(out, spiketimes(cluster))
         end
     end
@@ -54,7 +54,7 @@ end
 function spikesatdepth(p::RelativeSpikes{T}, depth::N) where {T<:Real} where {N<:Real}
     out::Vector{Vector{T}} = Vector{Vector{T}}(undef, 0)
     for cluster in clustervector(p)
-        if parse(N, info(cluster, "depth")) == depth
+        if info(cluster, "depth") == depth
             out = vcat(out, spiketimes(cluster))
         end
     end
@@ -64,7 +64,7 @@ end
 function spikesatdepth(p::RelativeSpikes{T}, depth::NTuple{2,N}) where {T<:Real} where {N<:Real}
     out::Vector{Vector{T}} = Vector{Vector{T}}(undef, 0)
     for cluster in clustervector(p)
-        if depth[1] <= parse(N, info(cluster, "depth")) < depth[2]
+        if depth[1] <= info(cluster, "depth") < depth[2]
             out = vcat(out, spiketimes(cluster))
         end
     end
@@ -75,7 +75,7 @@ end
 function spikesatdepth(p::RelativeSpikes{T}, depth::Set{N}) where {T<:Real} where {N<:Real}
     out::Vector{Vector{T}} = Vector{Vector{T}}(undef, 0)
     for cluster in clustervector(p)
-        if parse(N, info(cluster, "depth")) in depth
+        if info(cluster, "depth") in depth
             out = vcat(out, spiketimes(cluster))
         end
     end
