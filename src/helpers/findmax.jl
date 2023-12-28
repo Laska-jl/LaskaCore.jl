@@ -1,5 +1,3 @@
-
-
 """
     maxval(vec::Vector{Vector{T}}, init::T=0) where {T<:Real}
 
