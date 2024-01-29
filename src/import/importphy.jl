@@ -242,5 +242,8 @@ function importphy(phydir::String, filters::Tuple{Tuple{Symbol,Function}}, glxdi
     return PhyOutput(idvec, clustervec, triggers, metadict, info)
 end
 
+for x in 1:10
+	println(x)
+end
 
-
+sum(1,1)
