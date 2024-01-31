@@ -81,7 +81,7 @@ end
 Returns a `cluster` from `experiment`.
 
 """
-function getcluster(experiment::T, cluster::Int64) where {T<:AbstractExperiment}
+function getcluster(experiment::T, cluster::Int) where {T<:AbstractExperiment}
     return experiment.clusters[findfirst(x -> x == cluster, experiment.clusterids)]
 end
 
@@ -149,7 +149,7 @@ function info(experiment::T) where {T<:AbstractExperiment}
     return experiment.info
 end
 
-function info(experiment::T, var::String) where {T<:AbstractExperiment}
+function info(experiment::T, var) where {T<:AbstractExperiment}
     return experiment.info[!, var]
 end
 

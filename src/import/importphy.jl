@@ -40,11 +40,11 @@ function importphy(phydir::String, glxdir::String="", triggerpath::String=""; in
     if Sys.iswindows()
         clusters::Vector{Int64} = convert(Vector{Int64}, NPZ.npzread(phydir * "\\spike_clusters.npy"))
         times::Vector{Int64} = convert(Vector{Int64}, NPZ.npzread(phydir * "\\spike_times.npy")[:, 1])
-        info::DataFrames.DataFrame = read(phydir * "\\cluster_info.tsv", DataFrame)
+        info::DataFrames.DataFrame = CSV.read(phydir * "\\cluster_info.tsv", DataFrame)
     else
         clusters = convert(Vector{Int64}, NPZ.npzread(phydir * "/spike_clusters.npy"))
         times = convert(Vector{Int64}, NPZ.npzread(phydir * "/spike_times.npy")[:, 1])
-        info = read(phydir * "/cluster_info.tsv", DataFrame)
+        info = CSV.read(phydir * "/cluster_info.tsv", DataFrame)
     end
 
     idvec::Vector{Int64} = info[!, "cluster_id"]
@@ -64,10 +64,6 @@ function importphy(phydir::String, glxdir::String="", triggerpath::String=""; in
     end
     idvec = info[!, "cluster_id"]
 
-    for id in idvec
-        inf = @view info[findall(x -> x == id, info[!, "cluster_id"]), :]
-        push!(clustervec, Cluster(id, inf, sort!(resdict[id])))
-    end
 
     if triggerpath != ""
         if triggerpath[end-3:end] == ".bin"
@@ -98,8 +94,16 @@ function importphy(phydir::String, glxdir::String="", triggerpath::String=""; in
         close(tmp)
         metaraw = split.(metaraw, "=")
         metadict = Dict{SubString{String},SubString{String}}(i[1] => i[2] for i in metaraw)
+        samprate = parse(Float64, metadict["imSampRate"])
+        info.samprate = repeat([samprate], size(info, 1))
     else
         metadict = Dict{SubString{String},SubString{String}}()
+    end
+
+
+    for id in idvec
+        inf = info[findall(x -> x == id, info[!, "cluster_id"]), :]
+        push!(clustervec, Cluster(id, inf, sort!(resdict[id])))
     end
 
     return PhyOutput(idvec, clustervec, triggers, metadict, info)
@@ -139,7 +143,7 @@ function importphy(phydir::String, filters::Tuple{Symbol,Function}, glxdir::Stri
     idvec = info[!, "cluster_id"]
 
     for id in idvec
-        inf = @view info[findall(x -> x == id, info[!, "cluster_id"]), :]
+        inf = info[findall(x -> x == id, info[!, "cluster_id"]), :]
         push!(clustervec, Cluster(id, inf, sort!(resdict[id])))
     end
 
@@ -166,9 +170,18 @@ function importphy(phydir::String, filters::Tuple{Symbol,Function}, glxdir::Stri
         close(tmp)
         metaraw = split.(metaraw, "=")
         metadict = Dict{SubString{String},SubString{String}}(i[1] => i[2] for i in metaraw)
+        samprate = parse(Float64, metadict["imSampRate"])
+        info.samprate = repeat(samprate, size(info, 1))
     else
         metadict = Dict{SubString{String},SubString{String}}()
     end
+
+
+    for id in idvec
+        inf = info[findall(x -> x == id, info[!, "cluster_id"]), :]
+        push!(clustervec, Cluster(id, inf, sort!(resdict[id])))
+    end
+
     return PhyOutput(idvec, clustervec, triggers, metadict, info)
 end
 
@@ -178,11 +191,11 @@ function importphy(phydir::String, filters::Tuple{Tuple{Symbol,Function}}, glxdi
     if Sys.iswindows()
         clusters::Vector{Int64} = convert(Vector{Int64}, NPZ.npzread(phydir * "\\spike_clusters.npy"))
         times::Vector{Int64} = convert(Vector{Int64}, NPZ.npzread(phydir * "\\spike_times.npy")[:, 1])
-        info::DataFrames.DataFrame = read(phydir * "\\cluster_info.tsv", DataFrame)
+        info::DataFrames.DataFrame = CSV.read(phydir * "\\cluster_info.tsv", DataFrame)
     else
         clusters = convert(Vector{Int64}, NPZ.npzread(phydir * "/spike_clusters.npy"))
         times = convert(Vector{Int64}, NPZ.npzread(phydir * "/spike_times.npy")[:, 1])
-        info = read(phydir * "/cluster_info.tsv", DataFrame)
+        info = CSV.read(phydir * "/cluster_info.tsv", DataFrame)
     end
 
     idvec::Vector{Int64} = info[!, "cluster_id"]
@@ -208,10 +221,6 @@ function importphy(phydir::String, filters::Tuple{Tuple{Symbol,Function}}, glxdi
     end
     idvec = info[!, "cluster_id"]
 
-    for id in idvec
-        inf = @view info[findall(x -> x == id, info[!, "cluster_id"]), :]
-        push!(clustervec, Cluster(id, inf, sort!(resdict[id])))
-    end
 
     if triggerpath != ""
         t = importchanint16(triggerpath)
@@ -236,14 +245,16 @@ function importphy(phydir::String, filters::Tuple{Tuple{Symbol,Function}}, glxdi
         close(tmp)
         metaraw = split.(metaraw, "=")
         metadict = Dict{SubString{String},SubString{String}}(i[1] => i[2] for i in metaraw)
+        samprate = parse(Float64, metadict["imSampRate"])
+        info.samprate = repeat(samprate, size(info, 1))
     else
         metadict = Dict{SubString{String},SubString{String}}()
     end
+
+    for id in idvec
+        inf = info[findall(x -> x == id, info[!, "cluster_id"]), :]
+        push!(clustervec, Cluster(id, inf, sort!(resdict[id])))
+    end
+
     return PhyOutput(idvec, clustervec, triggers, metadict, info)
 end
-
-for x in 1:10
-	println(x)
-end
-
-sum(1,1)

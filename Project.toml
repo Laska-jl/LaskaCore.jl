@@ -6,9 +6,11 @@ version = "0.0.5"
 [deps]
 CSV = "336ed68f-0bac-5ca0-87d4-7b16caf5d00b"
 DataFrames = "a93c6f00-e57d-5684-b7b6-d8193f3e46c0"
+Dates = "ade2ca70-3891-5945-98fb-dc099432e06a"
 LanguageServer = "2b0e0bc5-e4fd-59b4-8912-456d1b03d8d7"
 Mmap = "a63ad114-7e13-5084-954f-fe012c677804"
 NPZ = "15e1cf62-19b3-5cfa-8e77-841668bca605"
+Unitful = "1986cc42-f94f-5a68-af5c-568840ba703d"
 
 [compat]
 CSV = "0.10"

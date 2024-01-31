@@ -4,10 +4,12 @@ using NPZ
 using CSV
 using DataFrames
 using Mmap
+using Dates
+using Unitful
 
 include("types/cluster.jl")
 # Export AbstracCluster and related methods
-export AbstractCluster, id, nspikes, info, spiketimes
+export AbstractCluster, id, nspikes, info, spiketimes, timetosamplerate
 # Export Cluster and related types
 export Cluster
 export RelativeCluster
