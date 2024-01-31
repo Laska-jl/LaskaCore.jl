@@ -131,6 +131,15 @@ end
 
 
 """
+    spiketimes(experiment::PhyOutput)
+
+Get all spiketimes in `experiment`. Spiketimes are **not sorted**.
+"""
+function spiketimes(experiment::PhyOutput)
+	vcat(spiketimes.(clustervector(experiment))...)
+end
+
+"""
     getmeta(experiment::T, entry::String) where {T<:AbstractExperiment}
     getmeta(experiment::T) where {T<:AbstractExperiment}
 
