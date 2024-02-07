@@ -84,48 +84,19 @@ function spiketimes(cluster::T) where {T<:AbstractCluster}
     return cluster.spiketimes
 end
 
-# sample frequency/time conversion
-
-
-"""
-    timetosamplerate(cluster::T, time::U) where {T<:AbstractCluster, U<:Quantity{<:Number, Unitful.𝐓}}
-
-Convert a `time` of some unit from `Unitful.jl` into the samplerate of the `cluster`. For example, converting 10ms to a samplerate of 30 000Hz will yield a value of 300.0.
-
-# Examples
-
-```julia
-using LaskaCore
-using Unitful
-
-c = getcluster(exp, 33) # Get cluster '33' from an AbstractExperiment
-
-timetosamplerate(c, 10u"ms") # Convert 10ms into the samplerate of the cluster
-```
-"""
-function timetosamplerate(cluster::T, time::U) where {T<:AbstractCluster, U<:Quantity{<:Number, Unitful.𝐓}}
-	samp::Float64 = @views info(cluster, "samprate")
-    samp * ustrip(u"s", time)
-end
-
-function timetosamplerate(cluster::T, time::U) where {T<:AbstractCluster, U<:AbstractRange{<:Quantity{<:Number, Unitful.𝐓}}}
-	samp::Float64 = @views info(cluster, "samprate")
-    (samp * ustrip(u"s", time[begin])):(samp * ustrip(u"s", time[end]))
-
-end
 # Indexing
 
-function Base.getindex(cluster::T, I::U) where {T<:AbstractCluster, U<:Integer}
+function Base.getindex(cluster::T, I::U) where {T<:AbstractCluster,U<:Integer}
     1 <= I <= length(spiketimes(cluster)) || throw(BoundsError(cluster, I))
-	@inline spiketimes(cluster)[I]
+    @inline spiketimes(cluster)[I]
 end
 
-function Base.getindex(cluster::T, I::U) where {T<:AbstractCluster, U<:Number}
+function Base.getindex(cluster::T, I::U) where {T<:AbstractCluster,U<:Number}
     cluster[convert(Int, I)]
 end
 
-function Base.getindex(cluster::T, I::Vector{U}) where {T<:AbstractCluster, U<:Number}
-	[cluster[i] for i in I]
+function Base.getindex(cluster::T, I::Vector{U}) where {T<:AbstractCluster,U<:Number}
+    [cluster[i] for i in I]
 end
 
 
@@ -139,7 +110,7 @@ Base.lastindex(cluster::T) where {T<:AbstractCluster} = length(spiketimes(cluste
 
 Allows indexing with time ranges from `Unitful.jl`.
 """
-function Base.getindex(cluster::T, I::U) where {T<:AbstractCluster, U<:AbstractRange{<:Quantity{<:Number, Unitful.𝐓}}}
+function Base.getindex(cluster::T, I::U) where {T<:AbstractCluster,U<:AbstractRange{<:Quantity{<:Number,Unitful.𝐓}}}
     rang = timetosamplerate(cluster, I)
     filter(x -> rang[begin] <= x <= rang[end], spiketimes(cluster))
 end

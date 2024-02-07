@@ -4,6 +4,52 @@
 #
 ##############################################################
 
+# sample frequency/time conversion
+
+
+"""
+    timetosamplerate(cluster::T, time::U) where {T<:AbstractCluster, U<:Quantity{<:Number, Unitful.𝐓}}
+
+Convert a `time` of some unit from `Unitful.jl` into the samplerate of the `cluster`. For example, converting 10ms to a samplerate of 30 000Hz will yield a value of 300.0.
+The returned range will not be of any `Unitful` unit.
+
+# Examples
+
+```julia
+using LaskaCore
+using Unitful
+
+c = getcluster(exp, 33) # Get cluster '33' from an AbstractExperiment
+
+timetosamplerate(c, 10u"ms") # Convert 10ms into the samplerate of the cluster
+```
+"""
+function timetosamplerate(cluster::T, time::U) where {T<:AbstractCluster,U<:Quantity{<:Number,Unitful.𝐓}}
+    samp::Float64 = @views info(cluster, "samprate")
+    samp * ustrip(u"s", time)
+end
+
+"""
+    timetosamplerate(cluster::T, time::U) where {T<:AbstractCluster,U<:AbstractRange{<:Quantity{<:Number,Unitful.𝐓}}}
+
+Convert a `time`-range of some unit from `Unitful.jl` into the samplerate of the `cluster`. For example, converting 10ms to a samplerate of 30 000Hz will yield a value of 300.0.
+The returned range will not be of any `Unitful` unit.
+
+# Examples
+
+```julia
+using LaskaCore
+using Unitful
+
+c = getcluster(exp, 33) # Get cluster '33' from an AbstractExperiment
+
+timetosamplerate(c, (0:10)u"ms") # Convert 0:10ms into the samplerate of the cluster
+"""
+function timetosamplerate(cluster::T, time::U) where {T<:AbstractCluster,U<:AbstractRange{<:Quantity{<:Number,Unitful.𝐓}}}
+    samp::Float64 = @views info(cluster, "samprate")
+    (samp*ustrip(u"s", time[begin])):(samp*ustrip(u"s", time[end]))
+end
+
 
 """
     mstosamplerate(ms::Int64, experiment::T) where {T<:AbstractExperiment}

@@ -3,13 +3,13 @@ using Test
 using Unitful
 
 include("../../paths.jl")
-exp = importphy(
+res = importphy(
     PATH_TO_PHYOUTPUT,
     PATH_TO_GLXMETA,
     PATH_TO_TRIGGERCHANNEL
 )
 rel = relativespikes(
-    exp,
+    res,
     Dict("US" => 0, "CS" => 300),
     500,
     600
@@ -39,9 +39,9 @@ clst = getcluster(exp, 33)
 
     # getmeta
     @test getmeta(exp) == exp.meta
-    @test getmeta(exp) isa Dict{SubString{String}, SubString{String}}
+    @test getmeta(exp) isa Dict{SubString{String},SubString{String}}
 
     # info
-    @test info(exp, 1) == exp.info[!,1]
+    @test info(exp, 1) == exp.info[!, 1]
 
 end
