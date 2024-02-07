@@ -8,6 +8,12 @@ exp = importphy(
     PATH_TO_GLXMETA,
     PATH_TO_TRIGGERCHANNEL
 )
+rel = relativespikes(
+    exp,
+    Dict("US" => 0, "CS" => 300),
+    500,
+    600
+)
 clst = getcluster(exp, 33)
 
 

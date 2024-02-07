@@ -1,10 +1,9 @@
-# 
+#-------------------------------------------------------------
 # Container(s) for all Clusters that are part of an experiment
 #-------------------------------------------------------------
 
 
 """
-
     abstract type AbstractExperiment{T} end
 
 Parent type to concrete types representing entire experiments containing their specifications, metadata and clusters.
@@ -75,8 +74,8 @@ end
 
 
 """
+    getcluster(experiment::T, cluster::Int) where {T<:AbstractExperiment}
 
-    function getcluster(experiment::T, cluster::Int64) where {T<:AbstractExperiment}
 
 Returns a `cluster` from `experiment`.
 
@@ -97,7 +96,6 @@ function ntrigs(experiment::T) where {T<:AbstractExperiment}
 end
 
 """
-
     clusterids(experiment::T) where {T<:AbstractExperiment}
 
 Returns a Vector of all cluster id:s present in experiment.
@@ -108,7 +106,6 @@ function clusterids(experiment::T) where {T<:AbstractExperiment}
 end
 
 """
-
     triggertimes(experiment::T) where {T<:AbstractExperiment}
 
 Returns the timestamps of trigger events in `experiment`.
@@ -119,7 +116,6 @@ function triggertimes(experiment::T) where {T<:AbstractExperiment}
 end
 
 """
-
     clustervector(experiment::T) where {T<:AbstractExperiment}
 
 Returns a `Vector{T}` where T<:AbstractCluster containing all clusters in `experiment`.
@@ -129,6 +125,85 @@ function clustervector(experiment::T) where {T<:AbstractExperiment}
     return experiment.clusters
 end
 
+"""
+    Base.filter!(fun, exp::T) where {T<:AbstractExperiment}
+
+Filter [`Cluster`](@ref)s of a [`PhyOutput`](@ref) in-place based on `fun` which should act on a column of the `info` `DataFrame`.
+
+# Examples
+
+This example will modify the PhyOutput `res` removing any [`Cluster`](@ref)s with a contamination percentage above 5.
+```julia
+res = importphy(
+    PATH_TO_PHYOUTPUT,
+    PATH_TO_GLXMETA,
+    PATH_TO_TRIGGERCHANNEL
+)
+
+filter!(:ContamPct => x -> x <= 5, res)
+```
+
+"""
+function Base.filter!(fun, exp::T) where {T<:AbstractExperiment}
+    filter!(fun, info(exp))
+    idset = Set(info(exp, :cluster_id))
+    idsout = Vector{Int}(undef, size(info(exp), 1))
+    clustersout = Vector{Cluster{<:Number}}(undef, size(info(exp), 1))
+    n = 0
+    for (id, cluster) in zip(clusterids(exp), clustervector(exp))
+        println(id)
+        if id in idset
+            println(id, " filtered!")
+            n += 1
+            idsout[n] = id
+            clustersout[n] = cluster
+        end
+    end
+    exp.clusterids = idsout[begin:n]
+    exp.clusters = clustersout[begin:n]
+end
+
+"""
+    Base.filter(fun, exp::PhyOutput{T}) where {T<:Number}
+
+Filter [`Cluster`](@ref)s in a [`PhyOutput`](@ref) based on `fun` which should act on a column of the `info` `DataFrame`.
+
+# Examples
+
+This example will create a new PhyOutput containing only [`Cluster`](@ref)s with a contamination percentage less than 5.
+```julia
+res = importphy(
+    PATH_TO_PHYOUTPUT,
+    PATH_TO_GLXMETA,
+    PATH_TO_TRIGGERCHANNEL
+)
+
+filtered = filter(:ContamPct => x -> x <= 5, res)
+```
+
+"""
+function Base.filter(fun, exp::PhyOutput{T}) where {T<:Number}
+    infoout = deepcopy(info(exp))
+    filter!(fun, infoout)
+    idset = Set(infoout.cluster_id)
+    idsout = Vector{Int}(undef, size(info(exp), 1))
+    clustersout = Vector{Cluster{T}}(undef, size(info(exp), 1))
+    n = 0
+    for (id, cluster) in zip(clusterids(exp), clustervector(exp))
+        if id in idset
+            n += 1
+            idsout[n] = id
+            clustersout[n] = cluster
+        end
+    end
+    PhyOutput(
+        idsout[begin:n],
+        clustersout[begin:n],
+        triggertimes(exp),
+        getmeta(exp),
+        infoout
+    )
+end
 
 """
     spiketimes(experiment::PhyOutput)
@@ -136,7 +211,7 @@ end
 Get all spiketimes in `experiment`. Spiketimes are **not sorted**.
 """
 function spiketimes(experiment::PhyOutput)
-	vcat(spiketimes.(clustervector(experiment))...)
+    vcat(spiketimes.(clustervector(experiment))...)
 end
 
 """
@@ -154,6 +229,13 @@ function getmeta(experiment::T) where {T<:AbstractExperiment}
     return experiment.meta
 end
 
+"""
+    info(experiment::T) where {T<:AbstractExperiment}
+    info(experiment::T, var) where {T<:AbstractExperiment}
+
+Returns the `cluster_info.tsv` attached to the `experiment` in the form of a `DataFrame`.
+If `var` is provided returns a `Vector` of the matching column.
+"""
 function info(experiment::T) where {T<:AbstractExperiment}
     return experiment.info
 end
@@ -164,7 +246,7 @@ end
 
 # RelativeSpikes-specific functions
 """
-    relativespecs(rel::RelativeSpikes{T}) 
+    relativespecs(rel::RelativeSpikes{T}) where {T<:Real}
     relativespecs(rel::RelativeSpikes{T}, spec::String) where {T<:Real}
 
 
@@ -188,4 +270,20 @@ Returns a dict containing the stimtrain of a `RelativeSpikes` struct in the form
 """
 function stimtimes(experiment::RelativeSpikes)
     return experiment.stimtrain
+end
+
+"""
+    function spiketimes(experiment::RelativeSpikes{T}) where T
+
+Get all spiketimes of `experiment`.
+"""
+function spiketimes(experiment::RelativeSpikes{T}) where {T}
+    Nt = ntrigs(experiment)
+    outvec = [T[] for _ in 1:Nt]
+    for c in spiketimes.(clustervector(experiment))
+        for (n, v) in enumerate(c)
+            push!(outvec[n], v...)
+        end
+    end
+    return outvec
 end
