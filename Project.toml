@@ -15,6 +15,7 @@ Unitful = "1986cc42-f94f-5a68-af5c-568840ba703d"
 [compat]
 CSV = "0"
 DataFrames = "1"
+LanguageServer = "4"
 NPZ = "0"
 julia = "1"
 
