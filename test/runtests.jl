@@ -3,19 +3,10 @@ using Test
 using Unitful
 
 include("../../paths.jl")
-res = importphy(
-    PATH_TO_PHYOUTPUT,
-    PATH_TO_GLXMETA,
-    PATH_TO_TRIGGERCHANNEL
-)
-rel = relativespikes(
-    res,
-    Dict("US" => 0, "CS" => 300),
-    500,
-    600
-)
-clst = getcluster(exp, 33)
-
+res = importphy(PATH_TO_PHYOUTPUT, PATH_TO_GLXMETA, PATH_TO_TRIGGERCHANNEL)
+rel = relativespikes(res, Dict("US" => 0, "CS" => 300), 500, 600)
+clst = getcluster(res, 33)
+crel = getcluster(rel, 33)
 
 @testset "Basic AbstractExperiment interface" begin
     # getcluster

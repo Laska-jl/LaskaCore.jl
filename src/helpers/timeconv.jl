@@ -24,7 +24,10 @@ c = getcluster(exp, 33) # Get cluster '33' from an AbstractExperiment
 timetosamplerate(c, 10u"ms") # Convert 10ms into the samplerate of the cluster
 ```
 """
-function timetosamplerate(cluster::T, time::U) where {T<:AbstractCluster,U<:Quantity{<:Number,Unitful.𝐓}}
+function timetosamplerate(
+    cluster::T,
+    time::U,
+) where {T<:AbstractCluster,U<:Quantity{<:Number,Unitful.𝐓}}
     samp::Float64 = @views info(cluster, "samprate")
     samp * ustrip(u"s", time)
 end
@@ -44,8 +47,12 @@ using Unitful
 c = getcluster(exp, 33) # Get cluster '33' from an AbstractExperiment
 
 timetosamplerate(c, (0:10)u"ms") # Convert 0:10ms into the samplerate of the cluster
+```
 """
-function timetosamplerate(cluster::T, time::U) where {T<:AbstractCluster,U<:AbstractRange{<:Quantity{<:Number,Unitful.𝐓}}}
+function timetosamplerate(
+    cluster::T,
+    time::U,
+) where {T<:AbstractCluster,U<:AbstractRange{<:Quantity{<:Number,Unitful.𝐓}}}
     samp::Float64 = @views info(cluster, "samprate")
     (samp*ustrip(u"s", time[begin])):(samp*ustrip(u"s", time[end]))
 end
@@ -79,11 +86,15 @@ end
 """
     mstosamplerate!(out::Vector{Float64}, in::Vector{T}, factor::Float64) where {T<:Real}
 
-In-place function for converting a vector to a samplerate. Very simply multiplies each `in` with `factor` and puts the result in `out`.
+In-place function for converting a vector to a samplerate. Multiplies each `in` with `factor` and puts the result in `out`.
 
 Only for internal use.
 """
-function mstosamplerate!(out::Vector{Float64}, in::Vector{T}, factor::Float64) where {T<:Real}
+function mstosamplerate!(
+    out::Vector{Float64},
+    in::Vector{T},
+    factor::Float64,
+) where {T<:Real}
     @assert length(out) == length(in)
     @inbounds for i in eachindex(out)
         out[i] = in[i] * factor
@@ -121,4 +132,3 @@ function sampleratetoms!(out::Vector{T}, factor::T) where {T<:AbstractFloat}
         out[n] *= factor
     end
 end
-

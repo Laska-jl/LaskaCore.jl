@@ -15,7 +15,8 @@ export Cluster
 export RelativeCluster
 include("types/experiments.jl")
 # Export phyoutput
-export AbstractExperiment, getcluster, ntrigs, clusterids, triggertimes, clustervector, getmeta
+export AbstractExperiment,
+    getcluster, ntrigs, clusterids, triggertimes, clustervector, getmeta
 export PhyOutput
 export RelativeSpikes, relativespecs, stimtimes
 
@@ -24,7 +25,6 @@ include("helpers/timeconv.jl")
 include("helpers/rounding.jl")
 include("helpers/spikesatdepth.jl")
 export spikesatdepth
-include("helpers/normalize.jl")
 include("helpers/unpackvector.jl")
 include("helpers/isntempty.jl")
 include("helpers/findmax.jl")
