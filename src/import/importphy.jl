@@ -171,7 +171,7 @@ function importphy(phydir::String, filters::Tuple{Symbol,Function}, glxdir::Stri
         metaraw = split.(metaraw, "=")
         metadict = Dict{SubString{String},SubString{String}}(i[1] => i[2] for i in metaraw)
         samprate = parse(Float64, metadict["imSampRate"])
-        info.samprate = repeat(samprate, size(info, 1))
+        info.samprate = repeat([samprate], size(info, 1))
     else
         metadict = Dict{SubString{String},SubString{String}}()
     end
@@ -246,7 +246,7 @@ function importphy(phydir::String, filters::Tuple{Tuple{Symbol,Function}}, glxdi
         metaraw = split.(metaraw, "=")
         metadict = Dict{SubString{String},SubString{String}}(i[1] => i[2] for i in metaraw)
         samprate = parse(Float64, metadict["imSampRate"])
-        info.samprate = repeat(samprate, size(info, 1))
+        info.samprate = repeat([samprate], size(info, 1))
     else
         metadict = Dict{SubString{String},SubString{String}}()
     end
