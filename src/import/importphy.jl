@@ -9,13 +9,13 @@
 
     importphy(phydir::String, glxdir::String, triggerpath::String; includemua::Bool=false)
     importphy(phydir::String, filters::Tuple{Symbol,Function}, glxdir::String="", triggerpath::String=""; includemua::Bool=false)
-    importphy(phydir::String, filters::Tuple{Tuple{Symbol,Function}}, glxdir::String="", triggerpath::String=""; includemua::Bool=false)
+    importphy(phydir::String, filters::Vector{Tuple{Symbol,Function}}, glxdir::String="", triggerpath::String=""; includemua::Bool=false)
 
 Import Kilosort output processed in Phy. Spiketimes are sorted.
 
 By default, only "good" clusters as per phy output are included. Setting `includemua=true` will include "mua" clusters as well as unclassified.            
 Clusters may be further filtered based on any variable in "cluster_info.tsv". This is done by including a Tuple
-with the column to be filtered as a symbol and a filtering function. Several Tuples containing such filters may be included by wrapping them in a Tuple.         
+with the column to be filtered as a symbol and a filtering function. Several Tuples containing such filters may be included by wrapping them in a `Vector`.         
 
 
 
@@ -24,15 +24,21 @@ with the column to be filtered as a symbol and a filtering function. Several Tup
 # Removes any cluster with a mean firing rate less than 1:
 
 # A function returning true if x > 1
-function filterfunc(x::Float64)
-    return x > 1
-end
+filterfr = x -> x > 1
+filteramp = x -> x >= 100
 
 # A tuple with the above function (filterfunc) and the column to which it should be
 # applied (:fr).
-filtertuple = (:fr, filterfunc)
+frtuple = (:fr, filterfr)
 
-result = importphy("phyoutput_directory", filtertuple, "glxoutput_directory", "direct_path_to_triggerfile")
+# A second tuple with a function returning `true` if x >= 100 and the column (:amp) to which
+# it should be applied
+amptuple = (:amp, filteramp)
+
+# A `Vector` with the 2 `Tuple`s above.
+filtervec = [frtuple, amptuple]
+
+result = importphy("phyoutput_directory", filtervec, "glxoutput_directory", "direct_path_to_triggerfile")
 ```
 
 """
