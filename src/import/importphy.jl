@@ -4,7 +4,7 @@
 #
 ##############################################
 
-# NOTE: Importfunktioner typ klara.
+#  TODO: Add separate docstrings
 """
 
     importphy(phydir::String, glxdir::String, triggerpath::String; includemua::Bool=false)

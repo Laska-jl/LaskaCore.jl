@@ -121,7 +121,7 @@ end
 Returns a `Vector{T}` where T<:AbstractCluster containing all clusters in `experiment`.
 
 """
-function clustervector(experiment::T) where {T<:AbstractExperiment}
+@views function clustervector(experiment::T) where {T<:AbstractExperiment}
     return experiment.clusters
 end
 
@@ -294,5 +294,5 @@ nclusters(exp::AbstractExperiment) = length(clusterids(exp))
 
 function Base.show(io::IO, obj::AbstractExperiment)
     println(typeof(obj))
-    println(clusterids(obj))
+    println(clusterids)
 end

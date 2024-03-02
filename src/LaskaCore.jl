@@ -42,5 +42,7 @@ include("import/readglx.jl")
 # Export glx reading functions
 export spikemmap, tovolts, tovolts!, parseglxmeta
 
+include("filter/filterexperiment.jl")
+
 
 end
