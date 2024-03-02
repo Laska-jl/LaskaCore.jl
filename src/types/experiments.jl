@@ -287,3 +287,12 @@ function spiketimes(experiment::RelativeSpikes{T}) where {T}
     end
     return outvec
 end
+
+nclusters(exp::AbstractExperiment) = length(clusterids(exp))
+
+# Show and such
+
+function Base.show(io::IO, obj::AbstractExperiment)
+    println(typeof(obj))
+    println(clusterids(obj))
+end

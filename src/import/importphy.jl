@@ -95,7 +95,7 @@ function importphy(phydir::String, glxdir::String="", triggerpath::String=""; in
         metaraw = split.(metaraw, "=")
         metadict = Dict{SubString{String},SubString{String}}(i[1] => i[2] for i in metaraw)
         samprate = parse(Float64, metadict["imSampRate"])
-        info.samprate = repeat([samprate], size(info, 1))
+        info.samprate = [samprate for _ in 1:size(info, 1)]
     else
         metadict = Dict{SubString{String},SubString{String}}()
     end
@@ -171,7 +171,7 @@ function importphy(phydir::String, filters::Tuple{Symbol,Function}, glxdir::Stri
         metaraw = split.(metaraw, "=")
         metadict = Dict{SubString{String},SubString{String}}(i[1] => i[2] for i in metaraw)
         samprate = parse(Float64, metadict["imSampRate"])
-        info.samprate = repeat([samprate], size(info, 1))
+        info.samprate = [samprate for _ in 1:size(info, 1)]
     else
         metadict = Dict{SubString{String},SubString{String}}()
     end
@@ -187,7 +187,7 @@ end
 
 
 # Import with several filters in the form of a vector
-function importphy(phydir::String, filters::Tuple{Tuple{Symbol,Function}}, glxdir::String="", triggerpath::String=""; includemua::Bool=false)
+function importphy(phydir::String, filters::Vector{Tuple{Symbol,Function}}, glxdir::String="", triggerpath::String=""; includemua::Bool=false)
     if Sys.iswindows()
         clusters::Vector{Int64} = convert(Vector{Int64}, NPZ.npzread(phydir * "\\spike_clusters.npy"))
         times::Vector{Int64} = convert(Vector{Int64}, NPZ.npzread(phydir * "\\spike_times.npy")[:, 1])
@@ -246,7 +246,7 @@ function importphy(phydir::String, filters::Tuple{Tuple{Symbol,Function}}, glxdi
         metaraw = split.(metaraw, "=")
         metadict = Dict{SubString{String},SubString{String}}(i[1] => i[2] for i in metaraw)
         samprate = parse(Float64, metadict["imSampRate"])
-        info.samprate = repeat([samprate], size(info, 1))
+        info.samprate = [samprate for _ in 1:size(info, 1)]
     else
         metadict = Dict{SubString{String},SubString{String}}()
     end
