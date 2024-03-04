@@ -20,6 +20,7 @@ abstract type AbstractExperiment{T} end
         clusters::Vector{Cluster{T}}
         trigtimes::Vector{T}
         meta::Dict{SubString{String},SubString{String}}
+        info::DataFrame
     end
 
 Struct for holding Kilosort output preprocessed in Phy. Should be instantiated using the outer constructor [`LaskaCore.importphy`](@ref).
@@ -163,47 +164,6 @@ function Base.filter!(fun, exp::T) where {T<:AbstractExperiment}
     exp.clusters = clustersout[begin:n]
 end
 
-"""
-    Base.filter(fun, exp::PhyOutput{T}) where {T<:Number}
-
-Filter [`Cluster`](@ref)s in a [`PhyOutput`](@ref) based on `fun` which should act on a column of the `info` `DataFrame`.
-
-# Examples
-
-This example will create a new PhyOutput containing only [`Cluster`](@ref)s with a contamination percentage less than 5.
-```julia
-res = importphy(
-    PATH_TO_PHYOUTPUT,
-    PATH_TO_GLXMETA,
-    PATH_TO_TRIGGERCHANNEL
-)
-
-filtered = filter(:ContamPct => x -> x <= 5, res)
-```
-
-"""
-function Base.filter(fun, exp::PhyOutput{T}) where {T<:Number}
-    infoout = deepcopy(info(exp))
-    filter!(fun, infoout)
-    idset = Set(infoout.cluster_id)
-    idsout = Vector{Int}(undef, size(info(exp), 1))
-    clustersout = Vector{Cluster{T}}(undef, size(info(exp), 1))
-    n = 0
-    for (id, cluster) in zip(clusterids(exp), clustervector(exp))
-        if id in idset
-            n += 1
-            idsout[n] = id
-            clustersout[n] = cluster
-        end
-    end
-    PhyOutput(
-        idsout[begin:n],
-        clustersout[begin:n],
-        triggertimes(exp),
-        getmeta(exp),
-        infoout
-    )
-end
 
 """
     spiketimes(experiment::PhyOutput)

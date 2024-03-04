@@ -3,7 +3,6 @@
 #---------------------------------------------#
 
 """
-
     spikemmap(file::String, nchans::Int, filesizebytes::Int)
     spikemmap(file::String, meta::Dict{Substring{String}, SubString{String}})
 
@@ -53,7 +52,9 @@ end
 
 
 function tovolts!(out::Matrix{Float32}, in::Matrix{Int16}, cfactor::Float32)
-    @assert length(out) == length(in)
+    if size(out) != size(in)
+        throw(ArgumentError("out and in matrices should have the same dimensions!"))
+    end
     for i in eachindex(out)
         out[i] = in[i] * cfactor
     end
@@ -98,24 +99,41 @@ Assumes that `t` is 0 except at trigger events. Returns only the *first* index a
 
 ```julia
 
-# Example "triggerchannel"
 # * = Indices that will be returned, ^ = trigger
-#
-
 #            *                 *
-v = [0,0,0,0,1,1,1,1,0,0,0,0,0,1,1,1,1,1,1]
+v = [0,0,0,0,1,1,1,1,0,0,0,0,0,1,1,1,1,1,1,0,0,0,0,0]
 #            ^ ^ ^ ^           ^ ^ ^ ^ ^ ^ 
 
+# Will return [5, 14]
 LaskaCore.gettrig(v)
 ```
 
 """
 function gettrig(t::Vector{T}) where {T<:Real}
-    r::Vector{Int64} = findall(!iszero, t)
-    p::Matrix{Int64} = hcat(getindex.(r, 1), getindex.(r - circshift(r, 1), 1))
-    s::Vector{Int64} = @inbounds p[p[:, 2].!=1, 1]
-    return s
+    # Find all indices with triggers
+    r = findall(!iszero, t)
+    # Prepare result buffer
+    c = Vector{Int64}(undef, length(r))
+    n = 1
+    # Add the first index of r to c since it will always mark the start of an event.
+    c[begin] = r[begin]
+    # Iterate over all indices except first since it's already covered,
+    @views for i in Iterators.drop(eachindex(r), 1)
+        # If indices are nonsequential the current one must mark the start of an event.
+        if r[i] - r[i-1] != 1
+            n += 1
+            c[n] = r[i]
+        end
+    end
+    return c[begin:n]
 end
+
+#function gettrig(t::Vector{T}) where {T<:Real}
+#    r = findall(!iszero, t)
+#    p::Matrix{Int64} = hcat(getindex.(r, 1), getindex.(r - circshift(r, 1), 1))
+#    s::Vector{Int64} = @inbounds p[p[:, 2].!=1, 1]
+#    return s
+#end
 
 """
 

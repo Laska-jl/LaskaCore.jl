@@ -20,6 +20,9 @@ export AbstractExperiment,
 export PhyOutput
 export RelativeSpikes, relativespecs, stimtimes
 
+include("types/spikevector.jl")
+export SpikeVector
+
 # Helper functions
 include("helpers/timeconv.jl")
 include("helpers/rounding.jl")
