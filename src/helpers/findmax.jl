@@ -1,10 +1,10 @@
 """
-    maxval(vec::Vector{Vector{T}}, init::T=0) where {T<:Real}
+    maxval(vec::RelativeSpikeVector, init::T=0) where {T<:Real}
 
-Find the maximum value in a Vector of Vectors.
+Find the maximum value in a [`RelativeSpikeVector`](@ref).
 
 """
-function maxval(vec::Vector{Vector{T}}, init::T=0) where {T<:Real}
+function maxval(vec::RelativeSpikeVector, init::T=0) where {T<:Real}
     max::T = init
     @inbounds @views begin
         for n in eachindex(vec)
@@ -19,12 +19,12 @@ function maxval(vec::Vector{Vector{T}}, init::T=0) where {T<:Real}
 end
 
 """
-    minval(vec::Vector{Vector{T}}, init::T=0) where {T<:Real}
+    minval(vec::RelativeSpikeVector, init::T=0) where {T<:Real}
 
-Find the minimum value in a Vector of Vectors.
+Find the minimum value in a [`RelativeSpikeVector`](@ref).
 
 """
-function minval(vec::Vector{Vector{T}}, init::T=0) where {T<:Real}
+function minval(vec::RelativeSpikeVector, init::T=0) where {T<:Real}
     min::T = init
     @inbounds @views begin
         for n in eachindex(vec)

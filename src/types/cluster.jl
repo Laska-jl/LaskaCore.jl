@@ -7,7 +7,7 @@
 
 
 """
-    abstract type AbstractCluster{T} end
+    abstract type AbstractCluster{T,U} end
 
 Parent type to concrete types representing single clusters.
 
@@ -17,10 +17,10 @@ abstract type AbstractCluster{T,U} end
 
 
 """
-    struct Cluster{T} <: AbstractCluster{T}
+    struct Cluster{T,U} <: AbstractCluster{T,U}
         id::Int64
         info::SubDataFrame
-        spiketimes::Vector{T}
+spiketimes::SpikeVector{T,U}
     end
 
 Struct for holding a single Cluster.
@@ -120,10 +120,10 @@ function Base.getindex(cluster::T, I::U) where {T<:AbstractCluster,U<:AbstractRa
 end
 
 """
-    struct RelativeCluster{T} <: AbstractCluster{T}
+    struct RelativeCluster{T,U} <: AbstractCluster{T,U}
         id::Int64
         info::SubDataFrame
-        spiketimes::Vector{Vector{T}}
+spiketimes::RelativeSpikeVector{T,U}
     end
 
 

@@ -5,7 +5,7 @@
 #
 ##########################################################################################
 
-function unpackvector(vec::Vector{Vector{T}}) where {T}
+function unpackvector(vec::RelativeSpikeVector)
     outlen::Int64 = 0
     for v in vec
         outlen += length(v)
@@ -15,7 +15,7 @@ function unpackvector(vec::Vector{Vector{T}}) where {T}
     pos::Int = 1
     for v in vec
         veclen = length(v)
-        out[pos:veclen + pos - 1] = v
+        out[pos:veclen+pos-1] = v
         pos += veclen
     end
     return out
