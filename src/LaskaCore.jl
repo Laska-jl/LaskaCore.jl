@@ -7,6 +7,9 @@ using Mmap
 using Dates
 using Unitful
 
+# Export SpikeVector
+include("types/spikevector.jl")
+export SpikeVector
 include("types/cluster.jl")
 # Export AbstracCluster and related methods
 export AbstractCluster, id, nspikes, info, spiketimes, timetosamplerate
@@ -20,8 +23,6 @@ export AbstractExperiment,
 export PhyOutput
 export RelativeSpikes, relativespecs, stimtimes
 
-include("types/spikevector.jl")
-export SpikeVector
 
 # Helper functions
 include("helpers/timeconv.jl")

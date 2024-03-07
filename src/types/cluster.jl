@@ -12,7 +12,7 @@
 Parent type to concrete types representing single clusters.
 
 """
-abstract type AbstractCluster{T} end
+abstract type AbstractCluster{T,U} end
 
 
 
@@ -34,10 +34,10 @@ Direct field access is **not** recommended. Basic interface functions include:
 
 
 """
-struct Cluster{T} <: AbstractCluster{T}
+struct Cluster{T,U} <: AbstractCluster{T,U}
     id::Int64
     info::DataFrame
-    spiketimes::Vector{T}
+    spiketimes::SpikeVector{T,U}
 end
 
 
@@ -82,6 +82,10 @@ Returns the spiketimes of `cluster`.
 """
 function spiketimes(cluster::T) where {T<:AbstractCluster}
     return cluster.spiketimes
+end
+
+function samplerate(cluster::AbstractCluster)
+    return spiketimes(cluster) |> samplerate
 end
 
 # Indexing
@@ -134,8 +138,8 @@ Direct field access is **not** recommended. Basic interface functions include:
 - [`LaskaCore.spiketimes`](@ref) -- Returns a Vector containing all spiketimes of the `Cluster`.
 
 """
-struct RelativeCluster{T} <: AbstractCluster{T}
+struct RelativeCluster{T,U} <: AbstractCluster{T,U}
     id::Int64
     info::DataFrame
-    spiketimes::Vector{Vector{T}}
+    spiketimes::RelativeSpikeVector{T,U}
 end

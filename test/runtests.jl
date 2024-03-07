@@ -36,3 +36,8 @@ crel = getcluster(rel, 33)
     @test info(exp, 1) == exp.info[!, 1]
 
 end
+
+@testset "Basic AbstractCluster interface" begin
+    @inferred spiketimes(clst)
+    @test spiketimes(clst) == clst.spiketimes.spiketimes
+end

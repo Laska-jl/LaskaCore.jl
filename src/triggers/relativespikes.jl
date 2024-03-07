@@ -28,10 +28,10 @@ function relativespikes(p::PhyOutput{T}, stimtrain::Dict{String,T}, back::T, for
     backF::T = mstosamplerate(back, p)
     forwardF::T = mstosamplerate(forward, p)
 
-    idvec::Vector{Int} = Vector{Int}(undef, 0)
-    clustervec::Vector{RelativeCluster{T}} = Vector{RelativeCluster{T}}(undef, 0)
+    idvec = Vector{Int}(undef, 0)
+    clustervec = Vector{RelativeCluster{T}}(undef, 0)
     for cluster in clustervector(p)
-        resvec = Vector{Vector{T}}(undef, length(triggertimes(p)))
+        resvec = RelativeSpikeVector{T}(undef, length(triggertimes(p)), samplerate(cluster))
         for n in eachindex(resvec)
             resvec[n] = T[]
         end
@@ -46,7 +46,7 @@ function relativespikes(p::PhyOutput{T}, stimtrain::Dict{String,T}, back::T, for
 end
 
 
-function filtertriggers!(resultvector::Vector{Vector{T}}, spiketimes::Vector{T}, triggertimes::Vector{T}, back::T, forward::T) where {T<:Real}
+function filtertriggers!(resultvector::RelativeSpikeVector{T,U}, spiketimes::AbstractVector{T}, triggertimes::Vector{T}, back::T, forward::T) where {T<:Real,U}
     pos::Int = 1
     minT::T = triggertimes[pos] - back
     maxT::T = triggertimes[pos] + forward

@@ -101,6 +101,7 @@ function importphy(phydir::String, glxdir::String="", triggerpath::String=""; in
         metaraw = split.(metaraw, "=")
         metadict = Dict{SubString{String},SubString{String}}(i[1] => i[2] for i in metaraw)
         samprate = parse(Float64, metadict["imSampRate"])
+        samprate = isinteger(samprate) ? Int64(samprate) : samprate
         info.samprate = [samprate for _ in 1:size(info, 1)]
     else
         metadict = Dict{SubString{String},SubString{String}}()
@@ -109,7 +110,7 @@ function importphy(phydir::String, glxdir::String="", triggerpath::String=""; in
 
     for id in idvec
         inf = info[findall(x -> x == id, info[!, "cluster_id"]), :]
-        push!(clustervec, Cluster(id, inf, sort!(resdict[id])))
+        push!(clustervec, Cluster(id, inf, SpikeVector(sort!(resdict[id]), samprate)))
     end
 
     return PhyOutput(idvec, clustervec, triggers, metadict, info)
@@ -177,6 +178,7 @@ function importphy(phydir::String, filters::Tuple{Symbol,Function}, glxdir::Stri
         metaraw = split.(metaraw, "=")
         metadict = Dict{SubString{String},SubString{String}}(i[1] => i[2] for i in metaraw)
         samprate = parse(Float64, metadict["imSampRate"])
+        samprate = isinteger(samprate) ? Int64(samprate) : samprate
         info.samprate = [samprate for _ in 1:size(info, 1)]
     else
         metadict = Dict{SubString{String},SubString{String}}()
@@ -185,7 +187,7 @@ function importphy(phydir::String, filters::Tuple{Symbol,Function}, glxdir::Stri
 
     for id in idvec
         inf = info[findall(x -> x == id, info[!, "cluster_id"]), :]
-        push!(clustervec, Cluster(id, inf, sort!(resdict[id])))
+        push!(clustervec, Cluster(id, inf, sort!(resdict[id]), samprate))
     end
 
     return PhyOutput(idvec, clustervec, triggers, metadict, info)
@@ -252,6 +254,7 @@ function importphy(phydir::String, filters::Vector{Tuple{Symbol,Function}}, glxd
         metaraw = split.(metaraw, "=")
         metadict = Dict{SubString{String},SubString{String}}(i[1] => i[2] for i in metaraw)
         samprate = parse(Float64, metadict["imSampRate"])
+        samprate = isinteger(samprate) ? Int64(samprate) : samprate
         info.samprate = [samprate for _ in 1:size(info, 1)]
     else
         metadict = Dict{SubString{String},SubString{String}}()
@@ -259,7 +262,7 @@ function importphy(phydir::String, filters::Vector{Tuple{Symbol,Function}}, glxd
 
     for id in idvec
         inf = info[findall(x -> x == id, info[!, "cluster_id"]), :]
-        push!(clustervec, Cluster(id, inf, sort!(resdict[id])))
+        push!(clustervec, Cluster(id, inf, sort!(resdict[id]), samprate))
     end
 
     return PhyOutput(idvec, clustervec, triggers, metadict, info)

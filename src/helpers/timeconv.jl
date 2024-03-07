@@ -6,6 +6,7 @@
 
 # sample frequency/time conversion
 
+const TUnit = Quantity{<:Number,Unitful.𝐓}
 
 """
     timetosamplerate(cluster::T, time::U) where {T<:AbstractCluster, U<:Quantity{<:Number, Unitful.𝐓}}
@@ -27,7 +28,7 @@ timetosamplerate(c, 10u"ms") # Convert 10ms into the samplerate of the cluster
 function timetosamplerate(
     cluster::T,
     time::U,
-) where {T<:AbstractCluster,U<:Quantity{<:Number,Unitful.𝐓}}
+) where {T<:AbstractCluster,U<:TUnit}
     samp::Float64 = @views info(cluster, "samprate")
     samp * ustrip(u"s", time)
 end
@@ -52,12 +53,26 @@ timetosamplerate(c, (0:10)u"ms") # Convert 0:10ms into the samplerate of the clu
 function timetosamplerate(
     cluster::T,
     time::U,
-) where {T<:AbstractCluster,U<:AbstractRange{<:Quantity{<:Number,Unitful.𝐓}}}
+) where {T<:AbstractCluster,U<:AbstractRange{<:TUnit{<:Number}}}
     samp::Float64 = @views info(cluster, "samprate")
     (samp*ustrip(u"s", time[begin])):(samp*ustrip(u"s", time[end]))
 end
 
+function timetosamplerate(
+    V::T,
+    time::U,
+) where {T<:AbstractSpikeVector,U<:AbstractRange{<:TUnit{<:Number}}}
+    samp = @views samplerate(V)
+    return samp*ustrip(u"s", time[begin]):samp*ustrip(u"s", time[end])
+end
 
+function timetosamplerate(
+    V::T,
+    time::U,
+) where {T<:AbstractSpikeVector,U<:TUnit{<:Number}}
+    samp = @views samplerate(V)
+    return samp * ustrip(u"s", time[begin])
+end
 """
     mstosamplerate(ms::Int64, experiment::T) where {T<:AbstractExperiment}
     mstosamplerate(vec::Vector{T}, samplerate::U) where {T<:Real,U<:Real}

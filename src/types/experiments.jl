@@ -11,9 +11,6 @@ Parent type to concrete types representing entire experiments containing their s
 """
 abstract type AbstractExperiment{T} end
 
-
-
-
 """
     mutable struct PhyOutput{T} <: AbstractExperiment{T}
         clusterids::Vector{Int64}
