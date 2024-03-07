@@ -1,7 +1,7 @@
 name = "LaskaCore"
 uuid = "9ad29ce2-7782-4744-ab48-6ef9cc0286bb"
 authors = ["Elias Sjölin <elias.sjolin@gmail.com>"]
-version = "0.0.13"
+version = "0.0.14"
 
 [deps]
 CSV = "336ed68f-0bac-5ca0-87d4-7b16caf5d00b"
