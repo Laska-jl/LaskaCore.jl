@@ -9,7 +9,6 @@ using Unitful
 
 # Export SpikeVector
 include("types/spikevector.jl")
-export SpikeVector
 include("types/cluster.jl")
 # Export AbstracCluster and related methods
 export AbstractCluster, id, nspikes, info, spiketimes, timetosamplerate

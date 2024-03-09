@@ -15,34 +15,29 @@ filter!(:depth => x -> x >= 1000.0, exp)
 ```
 """
 function Base.filter!((var, f)::Pair, exp::AbstractExperiment{T}) where {T}
-    tmpinfo = filter(var => f, exp.info)
-    idset = Set(tmpinfo.cluster_id)
+    exclude = Vector{Bool}(undef, nclusters(exp))
+    filter!(var => f, exp.info)
+    idset = Set(exp.info[:, :cluster_id])
     if isempty(idset)
-        throw(ErrorException("No clusters remaining in experiment."))
+        @warn "This filter exludes all clusters."
     end
-    idsout = Vector{Int}(undef, size(info(exp), 1))
-    clustersout = Vector{Cluster{T}}(undef, nclusters(exp))
-    n = 0
-    for (id, cluster) in zip(clusterids(exp), clustervector(exp))
-        if id in idset
-            n += 1
-            idsout[n] = id
-            clustersout[n] = cluster
-        end
+    for (i, c) in enumerate(clusterids(exp))
+        exclude[i] = !(c in idset)
     end
-    exp.clusterids = idsout[begin:n]
-    exp.clusters = clustersout[begin:n]
-    exp.info = tmpinfo
+    deleteat!(exp.clusters, exclude)
+    deleteat!(exp.clusterids, exclude)
+    exp
 end
 
 """
-    Base.filter((var, f)::Pair, exp::PhyOutput{T}) where {T<:Number}
+    Base.filter((var, f)::Pair, exp::AbstractExperiment{T}) where {T}
 
-Filter [`Cluster`](@ref)s in a [`PhyOutput`](@ref) based on `fun` which should act on a column of the `info` `DataFrame`.
+Filter the `Cluster`s of `exp` based off a column in its info `DataFrame`. The syntax is the same as when filtering a "normal" DataFrame.
 
-# Examples
+# Example
 
 This example will filter a [`PhyOutput`](@ref) containing only [`Cluster`](@ref)s with a contamination percentage less than 5.
+
 ```julia
 res = importphy(
     PATH_TO_PHYOUTPUT,
@@ -54,25 +49,8 @@ filtered = filter(:ContamPct => x -> x <= 5, res)
 ```
 
 """
-function Base.filter((var, f)::Pair, exp::PhyOutput{T}) where {T<:Number}
-    infoout = deepcopy(info(exp))
-    filter!(fun, infoout)
-    idset = Set(infoout.cluster_id)
-    idsout = Vector{Int}(undef, size(info(exp), 1))
-    clustersout = Vector{Cluster{T}}(undef, size(info(exp), 1))
-    n = 0
-    for (id, cluster) in zip(clusterids(exp), clustervector(exp))
-        if id in idset
-            n += 1
-            idsout[n] = id
-            clustersout[n] = cluster
-        end
-    end
-    PhyOutput(
-        idsout[begin:n],
-        clustersout[begin:n],
-        triggertimes(exp),
-        getmeta(exp),
-        infoout
-    )
+function Base.filter((var, f)::Pair, exp::AbstractExperiment{T}) where {T}
+    out = deepcopy(exp)
+    filter!(var => f, out)
+    return out
 end

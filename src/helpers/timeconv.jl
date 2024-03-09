@@ -73,6 +73,7 @@ function timetosamplerate(
     samp = @views samplerate(V)
     return samp * ustrip(u"s", time[begin])
 end
+
 """
     mstosamplerate(ms::Int64, experiment::T) where {T<:AbstractExperiment}
     mstosamplerate(vec::Vector{T}, samplerate::U) where {T<:Real,U<:Real}

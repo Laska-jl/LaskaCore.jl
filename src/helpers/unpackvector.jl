@@ -10,7 +10,7 @@ function unpackvector(vec::RelativeSpikeVector)
     for v in vec
         outlen += length(v)
     end
-    out::Vector{Int64} = Vector{Int64}(undef, outlen)
+    out = Vector{Int64}(undef, outlen)
 
     pos::Int = 1
     for v in vec
@@ -20,3 +20,4 @@ function unpackvector(vec::RelativeSpikeVector)
     end
     return out
 end
+

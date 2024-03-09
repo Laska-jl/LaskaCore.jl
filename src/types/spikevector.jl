@@ -8,25 +8,48 @@ abstract type AbstractSpikeVector{T,U} <: AbstractArray{T,1} end
 
 """
     struct SpikeVector{T,U} <: AbstractSpikeVector{T,U}
+        spiketimes::Vector{T}
+        samplerate::U
+    end
 
 Struct for holding spiketimes and the sample rate in Hz.
 
 Since this is not a mutable struct the sample rate cannot be changed in-place. The spiketimes themselves may however be changed since they are stored in a mutable `Vector{T}`.
-For conversion to a new sample rate, [`LaskaCore.convertsamplerate`](@ref) is recommended.
+For conversion to a new sample rate, creating a new instance of `RelativeSpikeVector` using [`LaskaCore.convertsamplerate`](@ref) is recommended.
 """
 struct SpikeVector{T,U} <: AbstractSpikeVector{T,U}
     spiketimes::Vector{T}
     samplerate::U
 end
+export SpikeVector
 
+"""
+    struct RelativeSpikeVector{T,U} <: AbstractSpikeVector{T,U}
+        spiketimes::Vector{Vector{T}}
+        samplerate::U
+    end
+
+Struct for holding spiketimes relative to some trigger as well as their samplerate. 
+
+The spiketimes themselves are held in a `Vector{Vector{T}}` (A vector of vectors) where the inner vector `n` holds spiketimes relative to the `n`:th trigger event.
+
+Since this is not a mutable struct the sample rate cannot be changed in-place. The spiketimes themselves may however be changed since they are stored in a mutable `Vector{T}`.
+For conversion to a new sample rate, creating a new instance of `RelativeSpikeVector` using [`LaskaCore.convertsamplerate`](@ref) is recommended.
+
+# Indexing
+
+Since this is essentially just a vector of vectors it can be indexed as `vec[i][j]` where `i` refers to the `i`:th trigger events and `j` to the `j`:th spiketime tied to that trigger event.
+"""
 struct RelativeSpikeVector{T,U} <: AbstractSpikeVector{T,U}
     spiketimes::Vector{Vector{T}}
     samplerate::U
 end
+export RelativeSpikeVector
 
 #===============================
 Functions on AbstractSpikeVector
 ===============================#
+
 
 """
     Base.vec(V::AbstractSpikeVector{T,U}) where {T,U}
@@ -46,6 +69,13 @@ Returns the sample rate of `V`.
 """
 samplerate(V::AbstractSpikeVector) = V.samplerate
 
+"""
+    spiketimes(V::AbstractSpikeVector)
+
+Returns the spiketimes of `V` as a `Vector`.
+"""
+spiketimes(V::AbstractSpikeVector) = V.spiketimes
+
 @inline Base.size(V::AbstractSpikeVector) = Base.size(V.spiketimes)
 
 @inline Base.getindex(V::AbstractSpikeVector, i::Int) = V.spiketimes[i]
@@ -61,6 +91,9 @@ Base.IndexStyle(::Type{<:AbstractSpikeVector}) = IndexLinear()
 @inline Base.deleteat!(V::AbstractSpikeVector, inds::AbstractVector{Bool}) = Base.deleteat!(V.spiketimes, inds)
 @inline Base.deleteat!(V::AbstractSpikeVector, inds::AbstractVector) = Base.deleteat!(V.spiketimes, inds)
 @inline Base.deleteat!(V::AbstractSpikeVector, inds) = Base.deleteat!(V.spiketimes, inds)
+
+Base.firstindex(V::AbstractSpikeVector) = 1
+Base.lastindex(V::AbstractSpikeVector) = length(V)
 
 @inline Base.empty!(V::AbstractSpikeVector) = Base.empty!(V.spiketimes)
 
@@ -104,6 +137,8 @@ Functions on SpikeVector
 =======================#
 
 """
+    (::Type{SpikeVector{T}})(::UndefInitializer, n, samplerate) where {T}
+
 
 Initialize a `SpikeVector` of length `n` with `samplerate`
 """
@@ -241,7 +276,15 @@ end
     return out
 end
 
-# Unitful indexing
+# Unitful indexing and timerange filtering
+
+function spikes_in_timerange(V::AbstractVector, lowerbound, upperbound)
+    filter(inrange(lowerbound, upperbound), V)
+end
+
+function spikes_in_timerange(V::AbstractVector, range::AbstractRange)
+    filter(inrange(range[begin], range[end]), V)
+end
 
 """
     spikes_in_timerange(V::SpikeVector, range::AbstractRange{T}) where {T<:Quantity{<:Number,Unitful.𝐓}}
@@ -264,8 +307,45 @@ function spikes_in_timerange(V::SpikeVector, lowerbound::T, upperbound::T) where
     filter(inrange(lower, upper), V)
 end
 
-function spikes_in_timerange(V::SpikeVector, lowerbound, upperbound)
-    filter(inrange(lowerbound, upperbound), V)
+# In place versions
+
+"""
+    spikes_in_timerange!(V::AbstractVector, lowerbound, upperbound)
+
+Filter a [`SpikeVector`](@ref) in-place, only including spikes between `lowerbound` and `upperbound`.
+"""
+function spikes_in_timerange!(V::AbstractVector, lowerbound, upperbound)
+    filter!(inrange(lowerbound, upperbound), V)
+end
+
+"""
+    spikes_in_timerange!(V::SpikeVector, range::AbstractRange{T}) where {T<:Quantity{<:Number,Unitful.𝐓}}
+
+Filter a [`SpikeVector`](@ref) in-place using a [`Unitful`](@ref) time range, only including spikes that fall within the times specified in `range`.
+"""
+function spikes_in_timerange!(V::SpikeVector, range::AbstractRange{T}) where {T<:Quantity{<:Number,Unitful.𝐓}}
+    range = timetosamplerate(V, range)
+    filter!(inrange(ustrip(range[begin]), ustrip(range[end])), V)
+end
+
+"""
+    spikes_in_timerange!(V::SpikeVector, range::AbstractRange)
+
+Filter a [`SpikeVector`](@ref) in-place, only including spikes that fall within the times specified in `range`.
+"""
+function spikes_in_timerange!(V::SpikeVector, range::AbstractRange)
+    filter!(inrange(range[begin], range[end]), V)
+end
+
+"""
+    spikes_in_timerange!(V::SpikeVector, lowerbound::T, upperbound::T) where {T<:Quantity{<:Number,Unitful.𝐓}}
+
+Filter a [`SpikeVector`](@ref) in-place, only including spikes between `lowerbound` and `upperbound`.
+"""
+function spikes_in_timerange!(V::SpikeVector, lowerbound::T, upperbound::T) where {T<:Quantity{<:Number,Unitful.𝐓}}
+    lower = timetosamplerate(V, lowerbound)
+    upper = timetosamplerate(V, upperbound)
+    filter!(inrange(lower, upper), V)
 end
 
 @inline inrange(lowerbound, upperbound) = x -> lowerbound <= x <= upperbound
@@ -274,17 +354,133 @@ end
 Functions on RelativeSpikeVector
 ===============================#
 
-# Generel RelativeSpikeVector interface function
+"""
+    spikes_in_timerange(V::RelativeSpikeVector, lowerbound, upperbound)
+
+Filter a [`RelativeSpikeVector`](@ref), only including spikes between `lowerbound` and `upperbound`.
+"""
+function spikes_in_timerange(V::RelativeSpikeVector, lowerbound, upperbound)
+    out = deepcopy(V)
+    spikes_in_timerange!(out, lowerbound, upperbound)
+    return out
+end
+
+"""
+    spikes_in_timerange(V::RelativeSpikeVector, range::AbstractRange{T}) where {T<:Quantity{<:Number,Unitful.𝐓}}
+
+Filter a [`RelativeSpikeVector`](@ref) using a [`Unitful`](@ref) time range, only including spikes that fall within the times specified in `range`.
+"""
+function spikes_in_timerange(V::RelativeSpikeVector, range::AbstractRange{T}) where {T<:Quantity{<:Number,Unitful.𝐓}}
+    out = deepcopy(V)
+    spikes_in_timerange!(out, range)
+    return out
+end
+
+"""
+    spikes_in_timerange(V::SpikeVector, lowerbound::T, upperbound::T) where {T<:Quantity{<:Number,Unitful.𝐓}}
+
+Filter a [`RelativeSpikeVector`](@ref) using [`Unitful`](@ref) bounds, only including spikes between `lowerbound` and `upperbound`.
+"""
+function spikes_in_timerange(V::RelativeSpikeVector, lowerbound::T, upperbound::T) where {T<:Quantity{<:Number,Unitful.𝐓}}
+    out = deepcopy(V)
+    spikes_in_timerange(V, lowerbound, upperbound)
+    return out
+end
+
+"""
+    spikes_in_timerange(V::RelativeSpikeVector, range::AbstractRange)
+
+Filter a [`RelativeSpikeVector`](@ref), only including spikes that fall within the times specified in `range`.
+"""
+function spikes_in_timerange(V::RelativeSpikeVector, range::AbstractRange)
+    out = deepcopy(V)
+    spikes_in_timerange!(out, range)
+    return out
+end
+
+# In-place versions for RelativeSpikeVector
+
+"""
+    spikes_in_timerange!(V::RelativeSpikeVector, lowerbound, upperbound)
+
+Filter a [`RelativeSpikeVector`](@ref) in-place, only including spikes between `lowerbound` and `upperbound`.
+"""
+function spikes_in_timerange!(V::RelativeSpikeVector, lowerbound, upperbound)
+    for i in eachindex(V)
+        spikes_in_timerange!(V[i], lowerbound, upperbound)
+    end
+end
+
+
+"""
+    spikes_in_timerange!(V::RelativeSpikeVector{T,U}, range::AbstractRange{TUNIT}) where {T,U,TUNIT<:Quantity{<:Number,Unitful.𝐓}}
+
+Filter a [`RelativeSpikeVector`](@ref) in-place using a [`Unitful`](@ref) time range, only including spikes that fall within the times specified in `range`.
+"""
+function spikes_in_timerange!(V::RelativeSpikeVector{T,U}, range::AbstractRange{TimeUnit}) where {T,U,TimeUnit<:Quantity{<:Number,Unitful.𝐓}}
+    range = timetosamplerate(V, range)
+    for i in eachindex(V)
+        filter!(inrange(ustrip(range[begin]), ustrip(range[end])), V[i])
+    end
+end
+
+"""
+    spikes_in_timerange!(V::RelativeSpikeVector, range::AbstractRange)
+
+Filter a [`RelativeSpikeVector`](@ref) in-place, only including spikes that fall within the times specified in `range`.
+"""
+function spikes_in_timerange!(V::RelativeSpikeVector, range::AbstractRange)
+    for i in eachindex(V)
+        filter!(inrange(range[begin], range[end]), V[i])
+    end
+end
+
+"""
+    spikes_in_timerange!(V::RelativeSpikeVector, lowerbound::T, upperbound::T) where {T<:Quantity{<:Number,Unitful.𝐓}}
+
+Filter a [`RelativeSpikeVector`](@ref) in-place using [`Unitful`](@ref) bounds, only including spikes between `lowerbound` and `upperbound`.
+"""
+function spikes_in_timerange!(V::RelativeSpikeVector, lowerbound::T, upperbound::T) where {T<:Quantity{<:Number,Unitful.𝐓}}
+    lower = timetosamplerate(V, lowerbound)
+    upper = timetosamplerate(V, upperbound)
+    for i in eachindex(V)
+        filter!(inrange(lower, upper), V[i])
+    end
+end
+
+# Generel RelativeSpikeVector interface functions
 
 @inline function Base.setindex!(V::AbstractSpikeVector{T}, val::Vector{T}, i::Int) where {T}
     V.spiketimes[i] = val
 end
 
+"""
+    (::Type{RelativeSpikeVector{T,U}})(::UndefInitializer, n, samplerate::U) where {T,U}
 
-@inline function (::Type{RelativeSpikeVector{T}})(::UndefInitializer, n, samplerate) where {T}
-    RelativeSpikeVector{T,typeof(samplerate)}(Vector{Vector{T}}(undef, n), samplerate)
+Create a [`RelativeSpikeVector`](@ref) of length `n` with uninitialized sub-vectors.
+"""
+@inline function (::Type{RelativeSpikeVector{T,U}})(::UndefInitializer, n::Int, sample_rate::U) where {T,U}
+    RelativeSpikeVector{T,U}(Vector{Vector{T}}(undef, n), sample_rate)
 end
 
+# Creates a RelativeSpikeVector with each subvector[i] length of ns[i]
+"""
+    (::Type{RelativeSpikeVector{T,U}})(::UndefInitializer, ns::AbstractVector{Int}, sample_rate::U) where {T,U}
+
+Create a [`RelativeSpikeVector`](@ref) with `length(ns)` sub-vectors. Sub-vector`[n]` is initialized with `ns[n]` undefined elements. (ie `Vector{T}(undef, ns[n])`)
+"""
+@inline function (::Type{RelativeSpikeVector{T,U}})(::UndefInitializer, ns::AbstractVector{Int}, sample_rate::U) where {T,U}
+    out = RelativeSpikeVector{T,U}(undef, length(ns), sample_rate)
+    @inbounds for n in eachindex(out)
+        out[n] = Vector{T}(undef, ns[n])
+    end
+    return out
+end
+
+
+@inline function (::Type{RelativeSpikeVector{T}})(::UndefInitializer, n::Int, sample_rate::U) where {T,U}
+    RelativeSpikeVector{T,U}(Vector{Vector{T}}(undef, n), sample_rate)
+end
 
 """
     Base.similar(V::RelativeSpikeVector)

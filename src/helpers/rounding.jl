@@ -5,11 +5,9 @@
 ###############
 
 """
-
     roundup(value::T, interval::N) where T<:Real where N<:Real
 
 Rounds `value` up to the nearest greater multiple of `interval`.
-
 
 """
 function roundup(value::T, interval::N) where {T<:Real} where {N<:Real}

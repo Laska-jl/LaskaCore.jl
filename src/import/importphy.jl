@@ -68,7 +68,7 @@ function importphy(phydir::String, glxdir::String="", triggerpath::String=""; in
         isgood(group) = group == "good"
         info = subset(info, :group => ByRow(isgood), skipmissing=true)
     end
-    idvec = info[!, "cluster_id"]
+    idvec = deepcopy(info[!, "cluster_id"])
 
 
     if triggerpath != ""
@@ -147,7 +147,7 @@ function importphy(phydir::String, filters::Tuple{Symbol,Function}, glxdir::Stri
         info = subset(info, :group => ByRow(isgood), skipmissing=true)
     end
     filter!(filters[1] => filters[2], info)
-    idvec = info[!, "cluster_id"]
+    idvec = deepcopy(info[!, "cluster_id"])
 
     for id in idvec
         inf = info[findall(x -> x == id, info[!, "cluster_id"]), :]
@@ -227,7 +227,7 @@ function importphy(phydir::String, filters::Vector{Tuple{Symbol,Function}}, glxd
     for f in filters
         filter!(f[1] => f[2], info)
     end
-    idvec = info[!, "cluster_id"]
+    idvec = deepcopy(info[!, "cluster_id"])
 
 
     if triggerpath != ""

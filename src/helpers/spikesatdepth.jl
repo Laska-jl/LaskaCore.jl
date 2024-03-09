@@ -18,7 +18,7 @@ The included depths are controlled by the type of the `depth` variable:
 - A **Tuple** with 2 entries returns all clusters at depths between (and including) the values.                  
 - A **Set** returns the clusters with the exact depths in the Set.
 """
-function spikesatdepth(p::PhyOutput{T}, depth::N) where {T<:Real} where {N<:Real}
+function spikesatdepth(p::PhyOutput{T}, depth::N) where {T<:Real,N<:Real}
     out::Vector{T} = T[]
     for cluster in clustervector(p)
         if info(cluster, "depth") == depth
@@ -28,7 +28,7 @@ function spikesatdepth(p::PhyOutput{T}, depth::N) where {T<:Real} where {N<:Real
     return out
 end
 
-function spikesatdepth(p::PhyOutput{T}, depth::NTuple{2,N}) where {T<:Real} where {N<:Real}
+function spikesatdepth(p::PhyOutput{T}, depth::NTuple{2,N}) where {T<:Real,N<:Real}
     out::Vector{T} = T[]
     for cluster in clustervector(p)
         if depth[1] <= info(cluster, "depth") <= depth[2]
@@ -39,7 +39,7 @@ function spikesatdepth(p::PhyOutput{T}, depth::NTuple{2,N}) where {T<:Real} wher
 end
 
 
-function spikesatdepth(p::PhyOutput{T}, depth::Set{N}) where {T<:Real} where {N<:Real}
+function spikesatdepth(p::PhyOutput{T}, depth::Set{N}) where {T<:Real,N<:Real}
     out::Vector{T} = T[]
     for cluster in clustervector(p)
         if info(cluster, "depth") in depth
@@ -50,9 +50,10 @@ function spikesatdepth(p::PhyOutput{T}, depth::Set{N}) where {T<:Real} where {N<
 end
 
 # Versions for relativespikes
-
-function spikesatdepth(p::RelativeSpikes{T}, depth::N) where {T<:Real} where {N<:Real}
-    out::Vector{Vector{T}} = Vector{Vector{T}}(undef, 0)
+# TODO: Rewrite these to a better standard. Should they concatenate spikes around
+# The same trigger?
+function spikesatdepth(p::RelativeSpikes{T}, depth::N) where {T<:Real,N<:Real}
+    out = Vector{Vector{T}}(undef, 0)
     for cluster in clustervector(p)
         if info(cluster, "depth") == depth
             out = vcat(out, spiketimes(cluster))
@@ -61,7 +62,7 @@ function spikesatdepth(p::RelativeSpikes{T}, depth::N) where {T<:Real} where {N<
     return out
 end
 
-function spikesatdepth(p::RelativeSpikes{T}, depth::NTuple{2,N}) where {T<:Real} where {N<:Real}
+function spikesatdepth(p::RelativeSpikes{T}, depth::NTuple{2,N}) where {T<:Real,N<:Real}
     out::Vector{Vector{T}} = Vector{Vector{T}}(undef, 0)
     for cluster in clustervector(p)
         if depth[1] <= info(cluster, "depth") < depth[2]
@@ -72,7 +73,7 @@ function spikesatdepth(p::RelativeSpikes{T}, depth::NTuple{2,N}) where {T<:Real}
 end
 
 
-function spikesatdepth(p::RelativeSpikes{T}, depth::Set{N}) where {T<:Real} where {N<:Real}
+function spikesatdepth(p::RelativeSpikes{T}, depth::Set{N}) where {T<:Real,N<:Real}
     out::Vector{Vector{T}} = Vector{Vector{T}}(undef, 0)
     for cluster in clustervector(p)
         if info(cluster, "depth") in depth

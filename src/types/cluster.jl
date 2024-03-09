@@ -20,7 +20,7 @@ abstract type AbstractCluster{T,U} end
     struct Cluster{T,U} <: AbstractCluster{T,U}
         id::Int64
         info::SubDataFrame
-spiketimes::SpikeVector{T,U}
+        spiketimes::SpikeVector{T,U}
     end
 
 Struct for holding a single Cluster.
@@ -53,18 +53,21 @@ end
 """
     nspikes(cluster::T) where {T<:AbstractCluster}
 
-Returns the number of spikes (length of the `spiketimes` field) of `Cluster`.
+Returns the number of spikes of `cluster`.
 
 """
-function nspikes(cluster::T) where {T<:AbstractCluster}
+function nspikes(cluster::Cluster)
     return length(cluster.spiketimes)
 end
 
 """
     info(cluster::T) where {T<:AbstractCluster}
+    info(cluster::T, var::String) where {T<:AbstractCluster}
 
-Returns info (as dict) about `cluster`. A string may be supplied to return a specific entry (as Float64).
+Returns info (as dict) about `cluster`. A string may be supplied to return a specific entry.
 """
+function info end
+
 function info(cluster::T) where {T<:AbstractCluster}
     return cluster.info
 end
@@ -78,52 +81,28 @@ end
     spiketimes(cluster::Cluster::T) where {T<:AbstractCluster}
 
 Returns the spiketimes of `cluster`.
-
 """
 function spiketimes(cluster::T) where {T<:AbstractCluster}
     return cluster.spiketimes
 end
 
+"""
+    samplerate(cluster::AbstractCluster)
+
+Returns the current samplerate (in Hz) of `cluster`.
+"""
 function samplerate(cluster::AbstractCluster)
     return spiketimes(cluster) |> samplerate
 end
 
-# Indexing
-
-function Base.getindex(cluster::T, I::U) where {T<:AbstractCluster,U<:Integer}
-    1 <= I <= length(spiketimes(cluster)) || throw(BoundsError(cluster, I))
-    @inline spiketimes(cluster)[I]
-end
-
-function Base.getindex(cluster::T, I::U) where {T<:AbstractCluster,U<:Number}
-    cluster[convert(Int, I)]
-end
-
-function Base.getindex(cluster::T, I::Vector{U}) where {T<:AbstractCluster,U<:Number}
-    [cluster[i] for i in I]
-end
 
 
-Base.firstindex(cluster::T) where {T<:AbstractCluster} = 1
-Base.lastindex(cluster::T) where {T<:AbstractCluster} = length(spiketimes(cluster))
-
-# Time unit based indexing
-
-"""
-    Base.getindex(cluster::T, I::U) where {T<:AbstractCluster, U<:AbstractRange{<:Quantity{<:Number, Unitful.𝐓}}}
-
-Allows indexing with time ranges from `Unitful.jl`.
-"""
-function Base.getindex(cluster::T, I::U) where {T<:AbstractCluster,U<:AbstractRange{<:Quantity{<:Number,Unitful.𝐓}}}
-    rang = timetosamplerate(cluster, I)
-    filter(x -> rang[begin] <= x <= rang[end], spiketimes(cluster))
-end
 
 """
     struct RelativeCluster{T,U} <: AbstractCluster{T,U}
         id::Int64
         info::SubDataFrame
-spiketimes::RelativeSpikeVector{T,U}
+        spiketimes::RelativeSpikeVector{T,U}
     end
 
 
@@ -142,4 +121,21 @@ struct RelativeCluster{T,U} <: AbstractCluster{T,U}
     id::Int64
     info::DataFrame
     spiketimes::RelativeSpikeVector{T,U}
+end
+
+"""
+    nspikes(cluster::RelativeCluster)
+
+Returns the total number of spikes in `cluster`.
+"""
+function nspikes(cluster::RelativeCluster)
+    return sum(length.(spiketimes(cluster)))
+end
+
+function Base.show(io::IO, obj::Cluster)
+    println("$(typeof(obj)) with id=$(id(obj)) and $(nspikes(obj)) spikes")
+end
+
+function Base.show(io::IO, obj::RelativeCluster)
+    println("$(typeof(obj)) with id=$(id(obj)) and $(nspikes(obj)) spikes across $(length(spiketimes(obj))) trigger events")
 end
