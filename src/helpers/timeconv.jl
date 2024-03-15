@@ -129,7 +129,7 @@ function mstosamplerate!(
     in::Vector{T},
     factor::Float64,
 ) where {T<:Real}
-    @assert length(out) == length(in)
+    @boundscheck (length(out) == length(in) || throw(DimensionMismatch("Out and in vectors not of equal length")))
     @inbounds for i in eachindex(out)
         out[i] = in[i] * factor
     end
@@ -165,4 +165,16 @@ function sampleratetoms!(out::Vector{T}, factor::T) where {T<:AbstractFloat}
     @inbounds for n in eachindex(out)
         out[n] *= factor
     end
+end
+
+# Sample rates to time unit
+
+"""
+    sampleratetounit(samplerate, time, outunit)
+
+Convert a time in `samplerate` (in non-Unitful Hz ie a "normal" number) to a unit of `outunit` (u"ms" for example).
+"""
+function sampleratetounit(samplerate::Real, time::Real, outunit::Unitful.Units)
+    timeS = time / samplerate
+    return uconvert(outunit, (timeS)u"s")
 end
