@@ -7,7 +7,6 @@
 # sample frequency/time conversion
 
 const TUnit{T} = Quantity{T,Unitful.𝐓}
-const AnyStepRange{T} = Union{StepRange{T},StepRangeLen{T}}
 
 """
     timetosamplerate(cluster::T, time::U) where {T<:AbstractCluster, U<:Quantity{<:Number, Unitful.𝐓}}
@@ -68,11 +67,20 @@ function timetosamplerate(
 end
 
 # TODO: Fixa denna
-function timetosamplerate(V::T, time::U) where {T<:AbstractSpikeVector,U<:AnyStepRange{<:TUnit{<:Number}}}
+function timetosamplerate(V::T, time::U) where {T<:AbstractSpikeVector,U<:StepRange{<:TUnit{<:Number}}}
     samp = samplerate(V)
     lower = samp * ustrip(u"s", time[begin])
     step = samp * ustrip(u"s", time.step)
     upper = samp * ustrip(u"s", time[end])
+    return lower:step:upper
+end
+
+# Version for non-Int stepranges with Unitful units.
+function timetosamplerate(V::T, time::U) where {T<:AbstractSpikeVector,U<:StepRangeLen{<:TUnit{<:Number}}}
+    samp = samplerate(V)
+    lower = samp * ustrip(Float64, u"s", time[begin])
+    step = samp * ustrip(Float64, u"s", time.step)
+    upper = samp * ustrip(Float64, u"s", time[end])
     return lower:step:upper
 end
 

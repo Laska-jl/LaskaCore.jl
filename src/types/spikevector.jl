@@ -277,6 +277,8 @@ end
 end
 
 # Unitful indexing and timerange filtering
+# TODO: Implement/change these so '@views' can be used
+
 
 function spikes_in_timerange(V::AbstractVector, lowerbound, upperbound)
     filter(inrange(lowerbound, upperbound), V)
@@ -383,7 +385,7 @@ Filter a [`RelativeSpikeVector`](@ref) using [`Unitful`](@ref) bounds, only incl
 """
 function spikes_in_timerange(V::RelativeSpikeVector, lowerbound::T, upperbound::T) where {T<:Quantity{<:Number,Unitful.𝐓}}
     out = deepcopy(V)
-    spikes_in_timerange(V, lowerbound, upperbound)
+    spikes_in_timerange!(out, lowerbound, upperbound)
     return out
 end
 
