@@ -46,6 +46,9 @@ include("import/readglx.jl")
 export spikemmap, tovolts, tovolts!, parseglxmeta
 
 include("filter/filterexperiment.jl")
+include("filter/filterspikevecs.jl")
+
+include("helpers/iterators.jl")
 
 
 end
