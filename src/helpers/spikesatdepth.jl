@@ -12,10 +12,10 @@
 
 Returns a `Vector{T}` of all spiketimes at/in `depth`.
 
-The included depths are controlled by the type of the `depth` variable:                 
+The included depths are controlled by the type of the `depth` variable:
 
-- A **single number** returns only the spikes of clusters at that exact depth.                  
-- A **Tuple** with 2 entries returns all clusters at depths between (and including) the values.                  
+- A **single number** returns only the spikes of clusters at that exact depth.
+- A **Tuple** with 2 entries returns all clusters at depths between (and including) the values.
 - A **Set** returns the clusters with the exact depths in the Set.
 """
 function spikesatdepth(p::PhyOutput{T}, depth::N) where {T<:Real,N<:Real}
@@ -52,6 +52,7 @@ end
 # Versions for relativespikes
 # TODO: Rewrite these to a better standard. Should they concatenate spikes around
 # The same trigger?
+# TODO: Change output to RelativeSpikeVector
 function spikesatdepth(p::RelativeSpikes{T}, depth::N) where {T<:Real,N<:Real}
     out = Vector{Vector{T}}(undef, 0)
     for cluster in clustervector(p)
