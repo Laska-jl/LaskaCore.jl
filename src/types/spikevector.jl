@@ -90,8 +90,7 @@ Base.IndexStyle(::Type{<:AbstractSpikeVector}) = IndexLinear()
 @inline Base.deleteat!(V::AbstractSpikeVector, i::Integer) = Base.deleteat!(V.spiketimes, i)
 @inline Base.deleteat!(V::AbstractSpikeVector, r::AbstractUnitRange{<:Integer}) =
     Base.deleteat!(V.spiketimes, r)
-@inline Base.deleteat!(V::AbstractSpikeVector, inds::AbstractVector{Bool}) =
-    Base.deleteat!(V.spiketimes, inds)
+@inline Base.deleteat!(V::AbstractSpikeVector, inds::AbstractVector{Bool}) = Base.deleteat!(V.spiketimes, inds)
 @inline Base.deleteat!(V::AbstractSpikeVector, inds::AbstractVector) =
     Base.deleteat!(V.spiketimes, inds)
 @inline Base.deleteat!(V::AbstractSpikeVector, inds) = Base.deleteat!(V.spiketimes, inds)
