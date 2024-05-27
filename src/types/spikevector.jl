@@ -4,6 +4,11 @@ Vector type for holding spiketimes and the Hz/unit of their representation
 
 const HzType = Quantity{<:Number,Unitful.𝐓^-1}
 
+"""
+    abstract type AbstractSpikeVector{T,U} <: AbstractArray{T,1} end
+
+Supertype for `Vector`s holding spiketimes and the samplerate at which they were collected/are represented as.
+"""
 abstract type AbstractSpikeVector{T,U} <: AbstractArray{T,1} end
 
 """
@@ -341,7 +346,7 @@ end
 """
     spikes_in_timerange!(V::SpikeVector, range::AbstractRange{T}) where {T<:Quantity{<:Number,Unitful.𝐓}}
 
-Filter a [`LaskaCore.SpikeVector`](@ref) in-place using a [`Unitful`](@ref) time range, only including spikes that fall within the times specified in `range`.
+Filter a [`LaskaCore.SpikeVector`](@ref) in-place using a [`Unitful`] time range, only including spikes that fall within the times specified in `range`.
 """
 function spikes_in_timerange!(
     V::SpikeVector,
@@ -395,7 +400,7 @@ end
 """
     spikes_in_timerange(V::RelativeSpikeVector, range::AbstractRange{T}) where {T<:Quantity{<:Number,Unitful.𝐓}}
 
-Filter a [`LaskaCore.RelativeSpikeVector`](@ref) using a [`Unitful`](@ref) time range, only including spikes that fall within the times specified in `range`.
+Filter a [`LaskaCore.RelativeSpikeVector`](@ref) using a [`Unitful`] time range, only including spikes that fall within the times specified in `range`.
 """
 function spikes_in_timerange(
     V::RelativeSpikeVector,
@@ -409,7 +414,7 @@ end
 """
     spikes_in_timerange(V::SpikeVector, lowerbound::T, upperbound::T) where {T<:Quantity{<:Number,Unitful.𝐓}}
 
-Filter a [`LaskaCore.RelativeSpikeVector`](@ref) using [`Unitful`](@ref) bounds, only including spikes between `lowerbound` and `upperbound`.
+Filter a [`LaskaCore.RelativeSpikeVector`](@ref) using [`Unitful`] bounds, only including spikes between `lowerbound` and `upperbound`.
 """
 function spikes_in_timerange(
     V::RelativeSpikeVector,
@@ -449,7 +454,7 @@ end
 """
     spikes_in_timerange!(V::RelativeSpikeVector{T,U}, range::AbstractRange{TUNIT}) where {T,U,TUNIT<:Quantity{<:Number,Unitful.𝐓}}
 
-Filter a [`LaskaCore.RelativeSpikeVector`](@ref) in-place using a [`Unitful`](@ref) time range, only including spikes that fall within the times specified in `range`.
+Filter a [`LaskaCore.RelativeSpikeVector`](@ref) in-place using a [`Unitful`] time range, only including spikes that fall within the times specified in `range`.
 """
 function spikes_in_timerange!(
     V::RelativeSpikeVector{T,U},
@@ -475,7 +480,7 @@ end
 """
     spikes_in_timerange!(V::RelativeSpikeVector, lowerbound::T, upperbound::T) where {T<:Quantity{<:Number,Unitful.𝐓}}
 
-Filter a [`LaskaCore.RelativeSpikeVector`](@ref) in-place using [`Unitful`](@ref) bounds, only including spikes between `lowerbound` and `upperbound`.
+Filter a [`LaskaCore.RelativeSpikeVector`](@ref) in-place using [`Unitful`] bounds, only including spikes between `lowerbound` and `upperbound`.
 """
 function spikes_in_timerange!(
     V::RelativeSpikeVector,
