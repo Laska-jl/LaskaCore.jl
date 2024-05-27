@@ -260,7 +260,7 @@ end
 """
     Base.similar(V::T) where {T<:AbstractSpikeVector}
 
-Create an (subtype of) [`AbstractSpikeVector`](@ref) of the same type and size as `V` with the same samplerate.
+Create an (subtype of) [`LaskaCore.AbstractSpikeVector`](@ref) of the same type and size as `V` with the same samplerate.
 """
 function Base.similar(V::T) where {T<:AbstractSpikeVector}
     T(similar(V.spiketimes), V.samplerate)
@@ -269,7 +269,7 @@ end
 """
     Base.similar(V::T, S::Type) where {T<:AbstractSpikeVector}
 
-Create an (subtype of) [`AbstractSpikeVector`](@ref) of the same size as `V` with type `S` with the same samplerate.
+Create an (subtype of) [`LaskaCore.AbstractSpikeVector`](@ref) of the same size as `V` with type `S` with the same samplerate.
 """
 function Base.similar(V::T, S::Type) where {T<:AbstractSpikeVector}
     T(similar(V.spiketimes, S), V.samplerate)
@@ -302,7 +302,7 @@ end
 """
     spikes_in_timerange(V::SpikeVector, range::AbstractRange{T}) where {T<:Quantity{<:Number,Unitful.𝐓}}
 
-Returns a [`SpikeVector`](@ref), only including spikes that fall within the times specified in `range`.
+Returns a [`LaskaCore.SpikeVector`](@ref), only including spikes that fall within the times specified in `range`.
 """
 function spikes_in_timerange(
     V::SpikeVector,
@@ -315,7 +315,7 @@ end
 """
     spikes_in_timerange(V::SpikeVector, lowerbound::T, upperbound::T) where {T<:Quantity{<:Number,Unitful.𝐓}}
 
-Returns a [`SpikeVector`](@ref), only including spikes that fall within the times specified by `lowerbound` and `upperbound`.
+Returns a [`LaskaCore.SpikeVector`](@ref), only including spikes that fall within the times specified by `lowerbound` and `upperbound`.
 """
 function spikes_in_timerange(
     V::SpikeVector,
@@ -332,7 +332,7 @@ end
 """
     spikes_in_timerange!(V::AbstractVector, lowerbound, upperbound)
 
-Filter a [`SpikeVector`](@ref) in-place, only including spikes between `lowerbound` and `upperbound`.
+Filter a [`LaskaCore.SpikeVector`](@ref) in-place, only including spikes between `lowerbound` and `upperbound`.
 """
 function spikes_in_timerange!(V::AbstractVector, lowerbound, upperbound)
     filter!(inrange(lowerbound, upperbound), V)
@@ -341,7 +341,7 @@ end
 """
     spikes_in_timerange!(V::SpikeVector, range::AbstractRange{T}) where {T<:Quantity{<:Number,Unitful.𝐓}}
 
-Filter a [`SpikeVector`](@ref) in-place using a [`Unitful`](@ref) time range, only including spikes that fall within the times specified in `range`.
+Filter a [`LaskaCore.SpikeVector`](@ref) in-place using a [`Unitful`](@ref) time range, only including spikes that fall within the times specified in `range`.
 """
 function spikes_in_timerange!(
     V::SpikeVector,
@@ -354,7 +354,7 @@ end
 """
     spikes_in_timerange!(V::SpikeVector, range::AbstractRange)
 
-Filter a [`SpikeVector`](@ref) in-place, only including spikes that fall within the times specified in `range`.
+Filter a [`LaskaCore.SpikeVector`](@ref) in-place, only including spikes that fall within the times specified in `range`.
 """
 function spikes_in_timerange!(V::SpikeVector, range::AbstractRange)
     filter!(inrange(range[begin], range[end]), V)
@@ -363,7 +363,7 @@ end
 """
     spikes_in_timerange!(V::SpikeVector, lowerbound::T, upperbound::T) where {T<:Quantity{<:Number,Unitful.𝐓}}
 
-Filter a [`SpikeVector`](@ref) in-place, only including spikes between `lowerbound` and `upperbound`.
+Filter a [`LaskaCore.SpikeVector`](@ref) in-place, only including spikes between `lowerbound` and `upperbound`.
 """
 function spikes_in_timerange!(
     V::SpikeVector,
@@ -384,7 +384,7 @@ Functions on RelativeSpikeVector
 """
     spikes_in_timerange(V::RelativeSpikeVector, lowerbound, upperbound)
 
-Filter a [`RelativeSpikeVector`](@ref), only including spikes between `lowerbound` and `upperbound`.
+Filter a [`LaskaCore.RelativeSpikeVector`](@ref), only including spikes between `lowerbound` and `upperbound`.
 """
 function spikes_in_timerange(V::RelativeSpikeVector, lowerbound, upperbound)
     out = deepcopy(V)
@@ -395,7 +395,7 @@ end
 """
     spikes_in_timerange(V::RelativeSpikeVector, range::AbstractRange{T}) where {T<:Quantity{<:Number,Unitful.𝐓}}
 
-Filter a [`RelativeSpikeVector`](@ref) using a [`Unitful`](@ref) time range, only including spikes that fall within the times specified in `range`.
+Filter a [`LaskaCore.RelativeSpikeVector`](@ref) using a [`Unitful`](@ref) time range, only including spikes that fall within the times specified in `range`.
 """
 function spikes_in_timerange(
     V::RelativeSpikeVector,
@@ -409,7 +409,7 @@ end
 """
     spikes_in_timerange(V::SpikeVector, lowerbound::T, upperbound::T) where {T<:Quantity{<:Number,Unitful.𝐓}}
 
-Filter a [`RelativeSpikeVector`](@ref) using [`Unitful`](@ref) bounds, only including spikes between `lowerbound` and `upperbound`.
+Filter a [`LaskaCore.RelativeSpikeVector`](@ref) using [`Unitful`](@ref) bounds, only including spikes between `lowerbound` and `upperbound`.
 """
 function spikes_in_timerange(
     V::RelativeSpikeVector,
@@ -424,7 +424,7 @@ end
 """
     spikes_in_timerange(V::RelativeSpikeVector, range::AbstractRange)
 
-Filter a [`RelativeSpikeVector`](@ref), only including spikes that fall within the times specified in `range`.
+Filter a [`LaskaCore.RelativeSpikeVector`](@ref), only including spikes that fall within the times specified in `range`.
 """
 function spikes_in_timerange(V::RelativeSpikeVector, range::AbstractRange)
     out = deepcopy(V)
@@ -437,7 +437,7 @@ end
 """
     spikes_in_timerange!(V::RelativeSpikeVector, lowerbound, upperbound)
 
-Filter a [`RelativeSpikeVector`](@ref) in-place, only including spikes between `lowerbound` and `upperbound`.
+Filter a [`LaskaCore.RelativeSpikeVector`](@ref) in-place, only including spikes between `lowerbound` and `upperbound`.
 """
 function spikes_in_timerange!(V::RelativeSpikeVector, lowerbound, upperbound)
     for i in eachindex(V)
@@ -449,7 +449,7 @@ end
 """
     spikes_in_timerange!(V::RelativeSpikeVector{T,U}, range::AbstractRange{TUNIT}) where {T,U,TUNIT<:Quantity{<:Number,Unitful.𝐓}}
 
-Filter a [`RelativeSpikeVector`](@ref) in-place using a [`Unitful`](@ref) time range, only including spikes that fall within the times specified in `range`.
+Filter a [`LaskaCore.RelativeSpikeVector`](@ref) in-place using a [`Unitful`](@ref) time range, only including spikes that fall within the times specified in `range`.
 """
 function spikes_in_timerange!(
     V::RelativeSpikeVector{T,U},
@@ -464,7 +464,7 @@ end
 """
     spikes_in_timerange!(V::RelativeSpikeVector, range::AbstractRange)
 
-Filter a [`RelativeSpikeVector`](@ref) in-place, only including spikes that fall within the times specified in `range`.
+Filter a [`LaskaCore.RelativeSpikeVector`](@ref) in-place, only including spikes that fall within the times specified in `range`.
 """
 function spikes_in_timerange!(V::RelativeSpikeVector, range::AbstractRange)
     for i in eachindex(V)
@@ -475,7 +475,7 @@ end
 """
     spikes_in_timerange!(V::RelativeSpikeVector, lowerbound::T, upperbound::T) where {T<:Quantity{<:Number,Unitful.𝐓}}
 
-Filter a [`RelativeSpikeVector`](@ref) in-place using [`Unitful`](@ref) bounds, only including spikes between `lowerbound` and `upperbound`.
+Filter a [`LaskaCore.RelativeSpikeVector`](@ref) in-place using [`Unitful`](@ref) bounds, only including spikes between `lowerbound` and `upperbound`.
 """
 function spikes_in_timerange!(
     V::RelativeSpikeVector,
@@ -498,7 +498,7 @@ end
 """
     (::Type{RelativeSpikeVector{T,U}})(::UndefInitializer, n, samplerate::U) where {T,U}
 
-Create a [`RelativeSpikeVector`](@ref) of length `n` with uninitialized sub-vectors.
+Create a [`LaskaCore.RelativeSpikeVector`](@ref) of length `n` with uninitialized sub-vectors.
 """
 @inline function (::Type{RelativeSpikeVector{T,U}})(
     ::UndefInitializer,
@@ -512,7 +512,7 @@ end
 """
     (::Type{RelativeSpikeVector{T,U}})(::UndefInitializer, ns::AbstractVector{Int}, sample_rate::U) where {T,U}
 
-Create a [`RelativeSpikeVector`](@ref) with `length(ns)` sub-vectors. Sub-vector`[n]` is initialized with `ns[n]` undefined elements. (ie `Vector{T}(undef, ns[n])`)
+Create a [`LaskaCore.RelativeSpikeVector`](@ref) with `length(ns)` sub-vectors. Sub-vector`[n]` is initialized with `ns[n]` undefined elements. (ie `Vector{T}(undef, ns[n])`)
 """
 @inline function (::Type{RelativeSpikeVector{T,U}})(
     ::UndefInitializer,
@@ -538,7 +538,7 @@ end
 """
     Base.similar(V::RelativeSpikeVector)
 
-Create a [`RelativeSpikeVector`](@ref) of the same type and dimensions as `V` and the same samplerate.
+Create a [`LaskaCore.RelativeSpikeVector`](@ref) of the same type and dimensions as `V` and the same samplerate.
 """
 function Base.similar(V::RelativeSpikeVector)
     RelativeSpikeVector(similar.(V), samplerate(V))
@@ -547,7 +547,7 @@ end
 """
     Base.similar(V::RelativeSpikeVector, S::Type)
 
-Create a [`RelativeSpikeVector`](@ref) of the same dimensions as `V` with type `S` and the same samplerate.
+Create a [`LaskaCore.RelativeSpikeVector`](@ref) of the same dimensions as `V` with type `S` and the same samplerate.
 """
 function Base.similar(V::RelativeSpikeVector, S::Type)
     RelativeSpikeVector(similar.(V, S), samplerate(V))
