@@ -167,7 +167,7 @@ This function will create a new `SpikeVector` leaving `V` untouched.
 # Example
 
 In the example below, a `SpikeVector` with a sample rate of 30000Hz is converted to one with a sample rate of 1Hz.
-```jldoctest
+```julia
 julia> v = SpikeVector([i for i in 1:3000000], 30000)
 3000000-element SpikeVector{Int64, Int64}:
        1
@@ -213,7 +213,7 @@ This function will create a new `SpikeVector` leaving `V` untouched.
 In the example below, a `SpikeVector{Float64, Int64}` with sample rate 30000Hz is converted to a `SpikeVector{Int64,Int64}` with sample rate 1Hz.
 This requires that all resulting spiketimes of `V` after conversion is representable as `N`.
 
-```jldoctest
+```julia
 # Create a SpikeVector with spiketimes as Float64.
 julia> v = SpikeVector([i for i in 1.0:30000.0], 30000)
 30000-element SpikeVector{Float64, Int64}:
