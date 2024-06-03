@@ -2,6 +2,10 @@
 # Functions for importing spikeGLX .bin files |
 #---------------------------------------------#
 
+function importglx(path::String)
+
+end
+
 """
     spikemmap(file::String, nchans::Int, filesizebytes::Int)
     spikemmap(file::String, meta::Dict{Substring{String}, SubString{String}})
