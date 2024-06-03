@@ -2,8 +2,17 @@
 # Functions for importing spikeGLX .bin files |
 #---------------------------------------------#
 
-function importglx(path::String)
+# function importglx(path::String, meta::Dict, channels, t::U) where {U<:LaskaCore.TUnit}
+#     nchans = meta["nSavedChans"]
+#     
+#
+# end
 
+function importglx(path::String, nchans::Int, channels, t)
+    size = filesize(path)
+    mm = spikemmap(path, nchans, size)
+    out = mm[channels, t]
+    return out
 end
 
 """
@@ -16,14 +25,14 @@ The easiest way to provide this is to pass a parsed .meta file.
 """
 function spikemmap(file::String, nchans::Int, filesizebytes::Int)
     tmp::IOStream = open(file, "r")
-    mm::Array{Int16,2} = Mmap.mmap(tmp, Array{Int16,2}, (nchans, filesizebytes), 0)
+    mm::Array{Int16,2} = Mmap.mmap(tmp, Array{Int16,2}, (nchans, Int(filesizebytes / (2 * nchans))), 0)
     close(tmp)
     return mm
 end
 
 function spikemmap(file::String, meta::Dict{SubString{String},SubString{String}})
     n::Int = parse(Int, meta["nSavedChans"])
-    s::Int = Int(parse(Int, meta["fileSizeBytes"]) / (2 * n))
+    s::Int = Int(parse(Int, meta["fileSizeBytes"]))
     return spikemmap(file, n, s)
 end
 
