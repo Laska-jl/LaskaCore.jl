@@ -43,14 +43,15 @@ end
 Convert a Vector/Matrix of raw spikeGLX `Int16` data to volts.
 
 """
-function tovolts(in::Matrix{Int16}, meta::Dict{SubString{String},SubString{String}})
-    out::Matrix{Float32} = similar(in)
+function tovolts(in::AbstractArray, meta::Dict{SubString{String},SubString{String}})
+    # TODO: Fix these so they can use vectors and arrays
+    out = similar(in, Float32)
     return tovolts!(out, in, meta)
 end
 
-function tovolts!(out::Matrix{Float32}, in::Matrix{Int16}, meta::Dict{SubString{String},SubString{String}})
-    Imax::Float32 = parse(Float32, meta["imMaxInt"])
-    Vmax::Float32 = parse(Float32, meta["imAiRangeMax"])
+function tovolts!(out::AbstractArray, in::AbstractArray, meta::Dict{SubString{String},SubString{String}})
+    Imax = parse(Float32, meta["imMaxInt"])
+    Vmax = parse(Float32, meta["imAiRangeMax"])
     if meta["imDatPrb_type"] == "0"
         tbl = meta["~imroTbl"]
         tbl = split(tbl, ")(")
@@ -59,12 +60,12 @@ function tovolts!(out::Matrix{Float32}, in::Matrix{Int16}, meta::Dict{SubString{
     else
         gain = 80.0
     end
-    cfactor::Float32 = Vmax / Imax / gain
+    cfactor = Vmax / Imax / gain
     return tovolts!(out, in, cfactor)
 end
 
 
-function tovolts!(out::Matrix{Float32}, in::Matrix{Int16}, cfactor::Float32)
+function tovolts!(out::AbstractArray{<:AbstractFloat}, in::AbstractArray, cfactor::AbstractFloat)
     if size(out) != size(in)
         throw(ArgumentError("out and in matrices should have the same dimensions!"))
     end

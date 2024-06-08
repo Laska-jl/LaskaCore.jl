@@ -72,7 +72,7 @@ end
 
 Returns the sample rate of `V`.
 """
-samplerate(V::AbstractSpikeVector) = V.samplerate
+@inline samplerate(V::AbstractSpikeVector) = V.samplerate
 
 """
     spiketimes(V::AbstractSpikeVector)
