@@ -1,8 +1,4 @@
-##############################################
-#
 # Import output from phy as a PhyOutput struct
-#
-##############################################
 
 #  TODO: Add separate docstrings
 """
@@ -179,6 +175,7 @@ function importphy(phydir::String, filters::Tuple{Symbol,Function}, glxdir::Stri
         metadict = Dict{SubString{String},SubString{String}}(i[1] => i[2] for i in metaraw)
         samprate = parse(Float64, metadict["imSampRate"])
         samprate = isinteger(samprate) ? Int64(samprate) : samprate
+        #TODO: Remove this since sample rate is now contained in the spike vectors themselves
         info.samprate = [samprate for _ in 1:size(info, 1)]
     else
         metadict = Dict{SubString{String},SubString{String}}()
