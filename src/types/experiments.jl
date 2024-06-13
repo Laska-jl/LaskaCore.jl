@@ -35,7 +35,7 @@ struct PhyOutput{T} <: AbstractExperiment{T}
     clusterids::Vector{Int64}
     clusters::Vector{Cluster{T}}
     trigtimes::Vector{T}
-    meta::Dict{SubString{String},SubString{String}}
+    meta::Dict{String,String}
     info::DataFrame
 end
 
@@ -63,7 +63,7 @@ struct RelativeSpikes{T} <: AbstractExperiment{T}
     clusterids::Vector{Int64}
     clusters::Vector{RelativeCluster{T}}
     trigtimes::Vector{T}
-    meta::Dict{SubString{String},SubString{String}}
+    meta::Dict{String,String}
     info::DataFrame
     stimtrain::Dict{String,T}
     specs::Dict{String,T}

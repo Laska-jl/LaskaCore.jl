@@ -1,6 +1,5 @@
 # Import output from phy as a PhyOutput struct
 
-#  TODO: Add separate docstrings
 """
 
     importphy(phydir::String, glxdir::String, triggerpath::String; includemua::Bool=false)
@@ -38,16 +37,12 @@ result = importphy("phyoutput_directory", filtervec, "glxoutput_directory", "dir
 ```
 
 """
-function importphy(phydir::String, glxdir::String="", triggerpath::String=""; includemua::Bool=false)
-    if Sys.iswindows()
-        clusters::Vector{Int64} = convert(Vector{Int64}, NPZ.npzread(phydir * "\\spike_clusters.npy"))
-        times::Vector{Int64} = convert(Vector{Int64}, NPZ.npzread(phydir * "\\spike_times.npy")[:, 1])
-        info::DataFrames.DataFrame = CSV.read(phydir * "\\cluster_info.tsv", DataFrame)
-    else
-        clusters = convert(Vector{Int64}, NPZ.npzread(phydir * "/spike_clusters.npy"))
-        times = convert(Vector{Int64}, NPZ.npzread(phydir * "/spike_times.npy")[:, 1])
-        info = CSV.read(phydir * "/cluster_info.tsv", DataFrame)
-    end
+function importphy end
+
+function importphy(phydir::String, glxdir::String, triggerpath::String, includemua::Bool=false)
+    clusters::Vector{Int64} = convert(Vector{Int64}, NPZ.npzread(joinpath(phydir, "spike_clusters.npy")))
+    times::Vector{Int64} = convert(Vector{Int64}, NPZ.npzread(joinpath(phydir, "spike_times.npy"))[:, 1])
+    info::DataFrames.DataFrame = CSV.read(joinpath(phydir, "cluster_info.tsv"), DataFrame)
 
     idvec::Vector{Int64} = info[!, "cluster_id"]
 
@@ -67,41 +62,33 @@ function importphy(phydir::String, glxdir::String="", triggerpath::String=""; in
     idvec = deepcopy(info[!, "cluster_id"])
 
 
-    if triggerpath != ""
-        if triggerpath[end-3:end] == ".bin"
-            t = importchanint16bin(triggerpath)
-        elseif triggerpath[end-3:end] == ".csv"
-            t = importchanint16csv(triggerpath)
-        else
-            error("Triggerfile (triggerpath) must end in '.csv' or 'bin'!")
-        end
-        triggers = gettrig(t)
+    if triggerpath[end-3:end] == ".bin"
+        t = importchanint16bin(triggerpath)
+    elseif triggerpath[end-3:end] == ".csv"
+        t = importchanint16csv(triggerpath)
     else
-        triggers = Vector{Int64}(undef, 0)
+        error("Triggerfile (triggerpath) must be A csv or bin file")
     end
+    triggers = gettrig(t)
 
-    if glxdir != ""
-        glxfiles = readdir(glxdir, join=true)
-        binlist = [f for f in glxfiles if f[Base.length(f)-6:Base.length(f)] == ".ap.bin"]
-        if length(binlist) > 0
-            binfile::String = binlist[1]
-        else
-            binfile = ""
-        end
-        metafile::String = [f for f in glxfiles if f[Base.length(f)-7:Base.length(f)] == ".ap.meta"][1]
-
-        # Read metadata
-        tmp = open(metafile, "r")
-        metaraw = readlines(tmp)
-        close(tmp)
-        metaraw = split.(metaraw, "=")
-        metadict = Dict{SubString{String},SubString{String}}(i[1] => i[2] for i in metaraw)
-        samprate = parse(Float64, metadict["imSampRate"])
-        samprate = isinteger(samprate) ? Int64(samprate) : samprate
-        info.samprate = [samprate for _ in 1:size(info, 1)]
+    glxfiles = readdir(glxdir, join=true)
+    binlist = [f for f in glxfiles if f[Base.length(f)-6:Base.length(f)] == ".ap.bin"]
+    if length(binlist) > 0
+        binfile::String = binlist[1]
     else
-        metadict = Dict{SubString{String},SubString{String}}()
+        binfile = ""
     end
+    metafile::String = [f for f in glxfiles if f[Base.length(f)-7:Base.length(f)] == ".ap.meta"][1]
+
+    # Read metadata
+    tmp = open(metafile, "r")
+    metaraw = readlines(tmp)
+    close(tmp)
+    metaraw = split.(metaraw, "=")
+    metadict = Dict{String,String}(String(i[1]) => String(i[2]) for i in metaraw)
+    samprate = parse(Float64, metadict["imSampRate"])
+    samprate = isinteger(samprate) ? Int64(samprate) : samprate
+    info.samprate = [samprate for _ in 1:size(info, 1)]
 
 
     for id in idvec
@@ -114,16 +101,10 @@ end
 
 
 # Version with filters
-function importphy(phydir::String, filters::Tuple{Symbol,Function}, glxdir::String="", triggerpath::String=""; includemua::Bool=false)
-    if Sys.iswindows()
-        clusters::Vector{Int64} = convert(Vector{Int64}, NPZ.npzread(phydir * "\\spike_clusters.npy"))
-        times::Vector{Int64} = convert(Vector{Int64}, NPZ.npzread(phydir * "\\spike_times.npy")[:, 1])
-        info::DataFrames.DataFrame = CSV.read(phydir * "\\cluster_info.tsv", DataFrame)
-    else
-        clusters = convert(Vector{Int64}, NPZ.npzread(phydir * "/spike_clusters.npy"))
-        times = convert(Vector{Int64}, NPZ.npzread(phydir * "/spike_times.npy")[:, 1])
-        info = CSV.read(phydir * "/cluster_info.tsv", DataFrame)
-    end
+function importphy(phydir::String, glxdir::String, triggerpath::String, filter::Pair, includemua::Bool=false)
+    clusters::Vector{Int64} = convert(Vector{Int64}, NPZ.npzread(joinpath(phydir, "spike_clusters.npy")))
+    times::Vector{Int64} = convert(Vector{Int64}, NPZ.npzread(joinpath(phydir, "spike_times.npy"))[:, 1])
+    info::DataFrames.DataFrame = CSV.read(joinpath(phydir, "cluster_info.tsv"), DataFrame)
 
     idvec::Vector{Int64} = info[!, "cluster_id"]
 
@@ -142,49 +123,47 @@ function importphy(phydir::String, filters::Tuple{Symbol,Function}, glxdir::Stri
         isgood(group) = group == "good"
         info = subset(info, :group => ByRow(isgood), skipmissing=true)
     end
-    filter!(filters[1] => filters[2], info)
+
+    # Filter info dataframe
+    filter!(filter, info)
     idvec = deepcopy(info[!, "cluster_id"])
 
+
+    t = importchanint16(triggerpath)
+    triggers = gettrig(t)
+
+    glxfiles = readdir(glxdir, join=true)
+    binlist = [f for f in glxfiles if f[Base.length(f)-6:Base.length(f)] == ".ap.bin"]
+    if length(binlist) > 0
+        binfile::String = binlist[1]
+    else
+        binfile = ""
+        @warn "Raw spikeGLX file not found (could not find a file ending in '.ap.bin' in specified spikeGLX directory)"
+    end
+
+    metafilevec = [f for f in glxfiles if f[Base.length(f)-7:Base.length(f)] == ".ap.meta"]
+    if iszero(length(metafilevec))
+        throw(ErrorException("Could not find spikeGLX meta file not found (file ending in '.ap.meta' in specified spikeGLX directory)\nIf this file is not available please specify sample rate when calling 'importphy'"))
+    elseif length(metafilevec) > 1
+        throw(ErrorException("Several files ending in '.ap.meta' found in specified spikeGLX directory"))
+    end
+    metafile = metafilevec[1]
+
+    # Read metadata
+    tmp = open(metafile, "r")
+    metaraw = readlines(tmp)
+    close(tmp)
+    metaraw = split.(metaraw, "=")
+    metadict = Dict{String,String}(String(i[1]) => String(i[2]) for i in metaraw)
+    samprate = parse(Float64, metadict["imSampRate"])
+    samprate = isinteger(samprate) ? Int64(samprate) : samprate
+    #TODO: Remove this since sample rate is now contained in the spike vectors themselves
+    info.samprate = [samprate for _ in 1:size(info, 1)]
+
+    # Push clusters in idvec which contains filtered clusters
     for id in idvec
         inf = info[findall(x -> x == id, info[!, "cluster_id"]), :]
-        push!(clustervec, Cluster(id, inf, sort!(resdict[id])))
-    end
-
-    if triggerpath != ""
-        t = importchanint16(triggerpath)
-        triggers = gettrig(t)
-    else
-        triggers = Vector{Int64}(undef, 0)
-    end
-
-    if glxdir != ""
-        glxfiles = readdir(glxdir, join=true)
-        binlist = [f for f in glxfiles if f[Base.length(f)-6:Base.length(f)] == ".ap.bin"]
-        if length(binlist) > 0
-            binfile::String = binlist[1]
-        else
-            binfile = ""
-        end
-        metafile::String = [f for f in glxfiles if f[Base.length(f)-7:Base.length(f)] == ".ap.meta"][1]
-
-        # Read metadata
-        tmp = open(metafile, "r")
-        metaraw = readlines(tmp)
-        close(tmp)
-        metaraw = split.(metaraw, "=")
-        metadict = Dict{SubString{String},SubString{String}}(i[1] => i[2] for i in metaraw)
-        samprate = parse(Float64, metadict["imSampRate"])
-        samprate = isinteger(samprate) ? Int64(samprate) : samprate
-        #TODO: Remove this since sample rate is now contained in the spike vectors themselves
-        info.samprate = [samprate for _ in 1:size(info, 1)]
-    else
-        metadict = Dict{SubString{String},SubString{String}}()
-    end
-
-
-    for id in idvec
-        inf = info[findall(x -> x == id, info[!, "cluster_id"]), :]
-        push!(clustervec, Cluster(id, inf, sort!(resdict[id]), samprate))
+        push!(clustervec, Cluster(id, inf, SpikeVector(sort!(resdict[id]), samprate)))
     end
 
     return PhyOutput(idvec, clustervec, triggers, metadict, info)
@@ -192,16 +171,10 @@ end
 
 
 # Import with several filters in the form of a vector
-function importphy(phydir::String, filters::Vector{Tuple{Symbol,Function}}, glxdir::String="", triggerpath::String=""; includemua::Bool=false)
-    if Sys.iswindows()
-        clusters::Vector{Int64} = convert(Vector{Int64}, NPZ.npzread(phydir * "\\spike_clusters.npy"))
-        times::Vector{Int64} = convert(Vector{Int64}, NPZ.npzread(phydir * "\\spike_times.npy")[:, 1])
-        info::DataFrames.DataFrame = CSV.read(phydir * "\\cluster_info.tsv", DataFrame)
-    else
-        clusters = convert(Vector{Int64}, NPZ.npzread(phydir * "/spike_clusters.npy"))
-        times = convert(Vector{Int64}, NPZ.npzread(phydir * "/spike_times.npy")[:, 1])
-        info = CSV.read(phydir * "/cluster_info.tsv", DataFrame)
-    end
+function importphy(phydir::String, glxdir::String, triggerpath::String, filters::Vector{Pair{Symbol,Function}}; includemua::Bool=false)
+    clusters::Vector{Int64} = convert(Vector{Int64}, NPZ.npzread(joinpath(phydir, "spike_clusters.npy")))
+    times::Vector{Int64} = convert(Vector{Int64}, NPZ.npzread(joinpath(phydir, "spike_times.npy"))[:, 1])
+    info::DataFrames.DataFrame = CSV.read(joinpath(phydir, "cluster_info.tsv"), DataFrame)
 
     idvec::Vector{Int64} = info[!, "cluster_id"]
 
@@ -213,7 +186,6 @@ function importphy(phydir::String, filters::Vector{Tuple{Symbol,Function}}, glxd
         cluster::Int64 = pop!(clusters)
         time::Int64 = pop!(times)
         push!(resdict[cluster], time)
-
     end
 
     if !includemua
@@ -234,7 +206,6 @@ function importphy(phydir::String, filters::Vector{Tuple{Symbol,Function}}, glxd
         triggers = Vector{Int64}(undef, 0)
     end
 
-    if glxdir != ""
         glxfiles = readdir(glxdir, join=true)
         binlist = [f for f in glxfiles if f[Base.length(f)-6:Base.length(f)] == ".ap.bin"]
         if length(binlist) > 0
@@ -249,18 +220,55 @@ function importphy(phydir::String, filters::Vector{Tuple{Symbol,Function}}, glxd
         metaraw = readlines(tmp)
         close(tmp)
         metaraw = split.(metaraw, "=")
-        metadict = Dict{SubString{String},SubString{String}}(i[1] => i[2] for i in metaraw)
+    metadict = Dict{String,String}(String(i[1]) => String(i[2]) for i in metaraw)
         samprate = parse(Float64, metadict["imSampRate"])
         samprate = isinteger(samprate) ? Int64(samprate) : samprate
         info.samprate = [samprate for _ in 1:size(info, 1)]
-    else
-        metadict = Dict{SubString{String},SubString{String}}()
-    end
 
     for id in idvec
         inf = info[findall(x -> x == id, info[!, "cluster_id"]), :]
-        push!(clustervec, Cluster(id, inf, sort!(resdict[id]), samprate))
+        push!(clustervec, Cluster(id, inf, SpikeVector(sort!(resdict[id]), samprate)))
     end
 
     return PhyOutput(idvec, clustervec, triggers, metadict, info)
+end
+
+# Import without spikeGLX directory
+
+function importphy(phydir::String; triggerpath::String, samplerate::Real, includemua::Bool=false)
+    clusters::Vector{Int64} = convert(Vector{Int64}, NPZ.npzread(joinpath(phydir, "spike_clusters.npy")))
+    times::Vector{Int64} = convert(Vector{Int64}, NPZ.npzread(joinpath(phydir, "spike_times.npy"))[:, 1])
+    info::DataFrames.DataFrame = CSV.read(joinpath(phydir, "cluster_info.tsv"), DataFrame)
+
+    idvec::Vector{Int64} = info[!, "cluster_id"]
+
+    clustervec::Vector{Cluster{Int64}} = Vector(undef, 0)
+
+    resdict::Dict{Int64,Vector{Int64}} = Dict(c => Vector{Int64}(undef, 0) for c in idvec)
+
+    for _ in eachindex(clusters)
+        cluster::Int64 = pop!(clusters)
+        time::Int64 = pop!(times)
+        push!(resdict[cluster], time)
+    end
+
+    if !includemua
+        isgood(group) = group == "good"
+        info = subset(info, :group => ByRow(isgood), skipmissing=true)
+    end
+
+    idvec = deepcopy(info[!, "cluster_id"])
+
+    t = importchanint16(triggerpath)
+    triggers = gettrig(t)
+
+    for id in idvec
+        inf = info[findall(x -> x == id, info[!, "cluster_id"]), :]
+        push!(clustervec, Cluster(id, inf, SpikeVector(sort!(resdict[id]), samplerate)))
+    end
+
+    metadict = Dict{String, String}()
+
+    return PhyOutput(idvec, clustervec, triggers, metadict, info)
+    
 end
