@@ -37,6 +37,7 @@ include("triggers/relativespikes.jl")
 export relativespikes
 
 # Importing
+include("import/phyimportutils.jl")
 include("import/importphy.jl")
 # Export function for importing phy output
 export importphy

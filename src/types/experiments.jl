@@ -8,7 +8,7 @@
 
 Parent type to concrete types representing entire experiments containing their specifications, metadata and clusters.
 """
-abstract type AbstractExperiment{T} end
+abstract type AbstractExperiment{T,U,V} end
 
 """
     struct PhyOutput{T} <: AbstractExperiment{T}
@@ -31,10 +31,10 @@ Direct field access is **not** recommended. Basic interface functions include:
 - [`LaskaCore.ntrigs`](@ref) -- Returns the length of the trigger event time Vector.
 
 """
-struct PhyOutput{T} <: AbstractExperiment{T}
+struct PhyOutput{T,U,V} <: AbstractExperiment{T,U,V}
     clusterids::Vector{Int64}
-    clusters::Vector{Cluster{T}}
-    trigtimes::Vector{T}
+    clusters::Vector{Cluster{T,U}}
+    trigtimes::Vector{V}
     meta::Dict{String,String}
     info::DataFrame
 end
@@ -59,10 +59,10 @@ Additionally contains the fields:
 - `specs::Dict{String,T}` -- Dict containing the time before/after (`back`/`forward`) trigger events that spikes are included; as well as number of trigger events (`ntrig`).
 
 """
-struct RelativeSpikes{T} <: AbstractExperiment{T}
+struct RelativeSpikes{T,U,V} <: AbstractExperiment{T,U,V}
     clusterids::Vector{Int64}
-    clusters::Vector{RelativeCluster{T}}
-    trigtimes::Vector{T}
+    clusters::Vector{RelativeCluster{T,U}}
+    trigtimes::Vector{V}
     meta::Dict{String,String}
     info::DataFrame
     stimtrain::Dict{String,T}
