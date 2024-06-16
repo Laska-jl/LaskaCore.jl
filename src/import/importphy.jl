@@ -39,7 +39,6 @@ filtervec = [:fr => x -> x > 1, :amp => x -> x >= 30]
 
 result2 = importphy("phyoutput_directory", "glxoutput_directory", "direct_path_to_triggerfile"; filter=filtervec)
 
-result = importphy("phyoutput_directory", filtervec, "glxoutput_directory", "direct_path_to_triggerfile")
 ```
 
 """
@@ -81,7 +80,7 @@ function importphy(phydir::String, glxdir::String, triggerpath::String; filter::
     if triggerpath != ""
         triggers = _importtriggertimes(triggerpath)
     else
-        triggers = eltype(times)[]
+        triggers = nothing
     end
 
     if glxdir != ""
@@ -102,14 +101,13 @@ function importphy(phydir::String, glxdir::String, triggerpath::String; filter::
         metadict = Dict{String,String}(String(i[1]) => String(i[2]) for i in metaraw)
         samprate = parse(Float64, metadict["imSampRate"])
         samprate = isinteger(samprate) ? Int64(samprate) : samprate
-        info.samprate = [samprate for _ in 1:size(info, 1)]
         if !isnothing(samplerate) # If sample rate provided as keyword arg, override value found in SpikeGLX.meta file
             @info "Sample rate of spike times set to $samplerate as specified instead of $samprate found in SpikeGLX .meta file"
             samprate = samplerate
         end
     else # If no glxdir provided, set samprate to manually specified value and initialize an empty metadict
         samprate = samplerate
-        metadict = Dict{String,String}()
+        metadict = nothing
     end
 
     clustervec = Vector{Cluster{eltype(times),typeof(samprate)}}(undef, 0)

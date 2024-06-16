@@ -100,11 +100,11 @@ end
 Convert a value in ms to samplerate of `experiment`. A custom samplerate may be provided instead of an `experiment`
 
 """
-function mstosamplerate(ms::Int64, experiment::T) where {T<:AbstractExperiment}
+function mstosamplerate(ms, experiment::T) where {T<:AbstractExperiment}
     return ms * parse(Float64, experiment.meta["imSampRate"]) * 0.001
 end
 
-function mstosamplerate(ms::Int64, samplerate::T) where {T<:Real}
+function mstosamplerate(ms, samplerate::T) where {T<:Real}
     return ms * samplerate * 0.001
 end
 # Version for vectors
@@ -116,7 +116,6 @@ function mstosamplerate(vec::Vector{T}, samplerate::U) where {T<:Real,U<:Real}
     return out
 end
 
-# NOTE: Replace with standard scalar?
 """
     mstosamplerate!(out::Vector{Float64}, in::Vector{T}, factor::Float64) where {T<:Real}
 
@@ -129,7 +128,7 @@ function mstosamplerate!(
     in::Vector{T},
     factor::Float64,
 ) where {T<:Real}
-    @boundscheck (length(out) == length(in) || throw(DimensionMismatch("Out and in vectors not of equal length")))
+    length(out) == length(in) || throw(DimensionMismatch("Out and in vectors not of equal length"))
     @inbounds for i in eachindex(out)
         out[i] = in[i] * factor
     end

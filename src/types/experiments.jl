@@ -8,7 +8,7 @@
 
 Parent type to concrete types representing entire experiments containing their specifications, metadata and clusters.
 """
-abstract type AbstractExperiment{T,U,V} end
+abstract type AbstractExperiment{T,U,M<:Union{Nothing,Dict{String,String}},S<:Union{Nothing,Vector{<:Integer}}} end
 
 """
     struct PhyOutput{T} <: AbstractExperiment{T}
@@ -31,11 +31,11 @@ Direct field access is **not** recommended. Basic interface functions include:
 - [`LaskaCore.ntrigs`](@ref) -- Returns the length of the trigger event time Vector.
 
 """
-struct PhyOutput{T,U,V} <: AbstractExperiment{T,U,V}
+struct PhyOutput{T,U,M,S} <: AbstractExperiment{T,U,M,S}
     clusterids::Vector{Int64}
     clusters::Vector{Cluster{T,U}}
-    trigtimes::Vector{V}
-    meta::Dict{String,String}
+    trigtimes::S
+    meta::M
     info::DataFrame
 end
 
@@ -59,14 +59,14 @@ Additionally contains the fields:
 - `specs::Dict{String,T}` -- Dict containing the time before/after (`back`/`forward`) trigger events that spikes are included; as well as number of trigger events (`ntrig`).
 
 """
-struct RelativeSpikes{T,U,V} <: AbstractExperiment{T,U,V}
+struct RelativeSpikes{T,U,M,S,V} <: AbstractExperiment{T,U,M,S}
     clusterids::Vector{Int64}
     clusters::Vector{RelativeCluster{T,U}}
-    trigtimes::Vector{V}
-    meta::Dict{String,String}
+    trigtimes::S
+    meta::M
     info::DataFrame
     stimtrain::Dict{String,T}
-    specs::Dict{String,T}
+    specs::Dict{String,V}
 end
 
 
@@ -77,7 +77,7 @@ end
 Returns a `cluster` from `experiment`.
 
 """
-function getcluster(experiment::T, cluster::Int) where {T<:AbstractExperiment}
+function getcluster(experiment::T, cluster) where {T<:AbstractExperiment}
     return experiment.clusters[findfirst(x -> x == cluster, clusterids(experiment))]
 end
 
@@ -224,3 +224,5 @@ nclusters(exp::AbstractExperiment) = length(clusterids(exp))
 function Base.show(io::IO, obj::AbstractExperiment)
     println("$(typeof(obj)) containing $(nclusters(obj)) $(typeof(clustervector(obj)[1])):\n$(clusterids(obj))")
 end
+
+

@@ -17,20 +17,21 @@ Returns a `RelativeSpikes` struct which wraps `RelativeCluster`:s and contains o
 - `back::T` -- Number of ms before trigger to include.
 - `forward::T` -- Number of ms after trigger to include.
 """
-function relativespikes(p::PhyOutput{T,U}, stimtrain::Dict{String,V}, back, forward) where {T,U,V}
+function relativespikes(p::PhyOutput{T,U,M,S}, stimtrain::Dict{String,V}, back, forward) where {T,U,V,M,S<:Vector{<:Integer}}
     # Create specs dict
-    specs = Dict{String,U}(
+    specs = Dict(
         "ntrig" => ntrigs(p),
         "back" => back,
         "forward" => forward
     )
     # Convert back/forward to sample rate
-    backF::T = mstosamplerate(back, p)
-    forwardF::T = mstosamplerate(forward, p)
 
     idvec = Vector{Int}(undef, 0)
     clustervec = Vector{RelativeCluster{T,U}}(undef, 0)
     for cluster in clustervector(p)
+        samprate = samplerate(cluster)
+        backF = mstosamplerate(back, samprate)
+        forwardF = mstosamplerate(forward, samprate)
         resvec = RelativeSpikeVector{T}(undef, length(triggertimes(p)), samplerate(cluster))
         for n in eachindex(resvec)
             resvec[n] = T[]
@@ -42,7 +43,6 @@ function relativespikes(p::PhyOutput{T,U}, stimtrain::Dict{String,V}, back, forw
         )
         push!(idvec, id(cluster))
     end
-    @show typeof(clustervec)
     return RelativeSpikes(idvec, clustervec, triggertimes(p), getmeta(p), info(p), stimtrain, specs)
 end
 
