@@ -11,13 +11,7 @@ Parent type to concrete types representing entire experiments containing their s
 abstract type AbstractExperiment{T,U,M<:Union{Nothing,Dict{String,String}},S<:Union{Nothing,Vector{<:Integer}}} end
 
 """
-    struct PhyOutput{T} <: AbstractExperiment{T}
-        clusterids::Vector{Int64}
-        clusters::Vector{Cluster{T}}
-        trigtimes::Vector{T}
-        meta::Dict{SubString{String},SubString{String}}
-        info::DataFrame
-    end
+    PhyOutput <: AbstractExperiment
 
 Struct for holding Kilosort output preprocessed in Phy. Should be instantiated using the outer constructor [`LaskaCore.importphy`](@ref).
 
@@ -25,9 +19,9 @@ Direct field access is **not** recommended. Basic interface functions include:
 
 - [`LaskaCore.clusterids`](@ref) -- Returns all cluster ID:s as a Vector.
 - [`LaskaCore.getcluster`](@ref) -- Returns a specific [`LaskaCore.Cluster`](@ref).
-- [`LaskaCore.clustervector`](@ref) -- Returns all [`LaskaCore.Cluster`](@ref):s.
-- [`LaskaCore.getmeta`](@ref) -- Returns the spikeGLX meta as a dict or a specific entry.
-- [`LaskaCore.triggertimes`](@ref) -- Returns the trigger event times.
+- [`LaskaCore.clustervector`](@ref) -- Returns all [`LaskaCore.Cluster`](@ref):s in a Vector.
+- [`LaskaCore.getmeta`](@ref) -- Returns the spikeGLX meta as a Dict or a specific entry if specified.
+- [`LaskaCore.triggertimes`](@ref) -- Returns the trigger event times as a Vector.
 - [`LaskaCore.ntrigs`](@ref) -- Returns the length of the trigger event time Vector.
 
 """
@@ -41,22 +35,23 @@ end
 
 
 """
-    struct RelativeSpikes{T} <: AbstractExperiment{T}
-        clusterids::Vector{Int64}
-        clusters::Vector{RelativeCluster{T}}
-        trigtimes::Vector{T}
-        meta::Dict{SubString{String},SubString{String}}
-        info::DataFrame
-        stimtrain::Dict{String,T}
-        specs::Dict{String,T}
-    end
+    RelativeSpikes <: AbstractExperiment
 
 Similar to [`LaskaCore.PhyOutput`](@ref). However, instead of [`LaskaCore.Cluster`](@ref)s, [`LaskaCore.RelativeCluster`](@ref)s are used.
-In these, spiketimes relative to trigger event(s) instead of absolute spiketimes are used.              
+In these, spike trains relative to trigger event(s) instead of absolute spiketimes are contained.              
 Additionally contains the fields:
 
-- `stimtrain::Dict{String,T}` -- Dict in the format `name/id` => `time`. `time` should be relative to trigger event. Specified by the user on creation of struct using [`LaskaCore.relativespikes`](@ref).
-- `specs::Dict{String,T}` -- Dict containing the time before/after (`back`/`forward`) trigger events that spikes are included; as well as number of trigger events (`ntrig`).
+Direct field access is **not** recommended. Interface functions include:
+
+- [`LaskaCore.clusterids`](@ref) -- Returns all cluster ID:s as a Vector.
+- [`LaskaCore.getcluster`](@ref) -- Returns a specific [`LaskaCore.Cluster`](@ref).
+- [`LaskaCore.clustervector`](@ref) -- Returns all [`LaskaCore.Cluster`](@ref):s in a Vector.
+- [`LaskaCore.getmeta`](@ref) -- Returns the spikeGLX meta as a Dict or a specific entry if specified.
+- [`LaskaCore.triggertimes`](@ref) -- Returns the trigger event times as a Vector.
+- [`LaskaCore.ntrigs`](@ref) -- Returns the length of the trigger event time Vector.
+- [`LaskaCore.stimtimes`](@ref) -- Returns a dict containging the stimulation labels and times specified when calling [`LaskaCore.relativespikes`](@ref).
+- [`LaskaCore.relativespecs`] -- Returns a dict with the `back` and `forward` values specified when calling [`LaskaCore.relativespikes`](@ref) as well as the number of trigger events.
+
 
 """
 struct RelativeSpikes{T,U,M,S,V} <: AbstractExperiment{T,U,M,S}
@@ -199,7 +194,7 @@ end
 """
     function spiketimes(experiment::RelativeSpikes{T}) where T
 
-Get all spiketimes of `experiment`.
+Get all spiketimes of `experiment`. Returns a Vector of Vectors where each sub-vector holds the spike times around one trigger event.
 """
 function spiketimes(experiment::RelativeSpikes{T}) where {T}
     Nt = ntrigs(experiment)

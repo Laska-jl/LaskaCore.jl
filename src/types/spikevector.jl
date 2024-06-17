@@ -105,7 +105,7 @@ Base.lastindex(V::AbstractSpikeVector) = length(V)
 
 @inline Base.empty!(V::AbstractSpikeVector) = Base.empty!(V.spiketimes)
 
-@inline function Base.insert!(V::AbstractSpikeVector{T}, i::Integer, item) where {T}
+@inline function Base.insert!(V::AbstractSpikeVector{T}, i::Integer, item::T) where {T}
     Base.insert!(V.spiketimes, i, item)
 end
 

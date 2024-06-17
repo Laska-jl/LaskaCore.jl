@@ -1,9 +1,4 @@
-################################################
-# 
 # Convert a PhyOutput to a relativeSpikes struct
-#
-################################################
-# DONE: Kom på ett bättre namn
 
 
 """
