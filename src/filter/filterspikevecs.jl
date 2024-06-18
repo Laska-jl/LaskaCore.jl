@@ -2,6 +2,13 @@
 Functions for filtering SpikeVectors
 =#
 
+"""
+    filterduplicatespikes(v::SpikeVector)
+
+Finds all spikes with identical spiketimes in `v` and removes one of them. Returns a new `SpikeVector`, leaving `v` unchanged.
+For mutating version see [`LaskaCore.filterduplicatespikes!`](@ref).
+
+"""
 function filterduplicatespikes(v::SpikeVector)
     inds = zeros(UInt64, 0)
     v[1] == v[2] && push!(inds, 1)
@@ -14,6 +21,12 @@ function filterduplicatespikes(v::SpikeVector)
     return out
 end
 
+"""
+    filterduplicatespikes!(v::SpikeVector)
+
+Finds all spikes with identical spiketimes in `v` and removes one of them. Mutates `v`, for non-mutating version see [`LaskaCore.filterduplicatespikes`](@ref).
+
+"""
 function filterduplicatespikes!(v::SpikeVector)
     inds = zeros(UInt64, 0)
     v[1] == v[2] && push!(inds, 1)

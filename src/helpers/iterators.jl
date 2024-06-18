@@ -10,7 +10,20 @@ Iteration utilities for spikevectors, clusters etc.
     ) where {T<:Integer}
 
 Iterator which lazily iterates over all sequential times between `t_start` and `t_end`, returning 1 at times where there is a spike.
-Currently only supports `Integer` time steps.
+Currently only supports `Integer` time steps. A `SpikeVector` with spikes at t = 2, 3, 5 with `t_start` = 0 and `t_end` = 5 would yield:            
+`[0, 0, 1, 1, 0, 1]`
+
+# Example
+
+```julia
+it = SpikeTrainIterator(spikes, 0, 1000)
+
+for s in it
+    # Do something based on if s = 1 or s = 0
+end
+
+
+```
 """
 struct SpikeTrainIterator{T<:Integer}
     spikes::SpikeVector{T}

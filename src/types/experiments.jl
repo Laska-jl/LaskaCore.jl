@@ -61,7 +61,7 @@ struct RelativeSpikes{T,U,M,S,V} <: AbstractExperiment{T,U,M,S}
     meta::M
     info::DataFrame
     stimtrain::Dict{String,T}
-    specs::Dict{String,V}
+    specs::@NamedTuple{back::V, forward::V, ntrig::Int64}
 end
 
 
@@ -220,4 +220,13 @@ function Base.show(io::IO, obj::AbstractExperiment)
     println("$(typeof(obj)) containing $(nclusters(obj)) $(typeof(clustervector(obj)[1])):\n$(clusterids(obj))")
 end
 
+"""
+    samplerates(experiment::AbstractExperiment)
 
+Returns a `Vector` of all samplerates of clusters in `experiment`.
+The samplerates are in the same order as the vector returned from [`LaskaCore.clusterids`](@ref).
+
+"""
+function samplerates(experiment::AbstractExperiment)
+    samplerate.(clustervector(experiment))
+end
