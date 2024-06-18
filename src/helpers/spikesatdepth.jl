@@ -73,7 +73,7 @@ Returns an empty `RelativeSpikeVector` if no clusters match the specified depth(
 function spikesatdepth(p::RelativeSpikes{T}, depth) where {T<:Real}
     samplerates = LaskaCore.samplerates(p)
     samp = all(samplerates .== samplerates[1]) ? samplerates[1] : throw(ErrorException("Samplerates of all clusters not equal"))
-    out = SpikeVector([T[] for _ in 1:ntrigs(p)], samp)
+    out = RelativeSpikeVector([T[] for _ in 1:ntrigs(p)], samp)
     for cluster in clustervector(p)
         if info(cluster, "depth") == depth
             times = spiketimes(cluster)
@@ -88,7 +88,7 @@ end
 function spikesatdepth(p::RelativeSpikes{T}, depth::NTuple{2}) where {T<:Real}
     samplerates = LaskaCore.samplerates(p)
     samp = all(samplerates .== samplerates[1]) ? samplerates[1] : throw(ErrorException("Samplerates of all clusters not equal"))
-    out = SpikeVector([T[] for _ in 1:ntrigs(p)], samp)
+    out = RelativeSpikeVector([T[] for _ in 1:ntrigs(p)], samp)
     for cluster in clustervector(p)
         if depth[1] <= info(cluster, "depth") < depth[2]
             times = spiketimes(cluster)
@@ -106,7 +106,7 @@ end
 function spikesatdepth(p::RelativeSpikes{T}, depth::Set) where {T<:Real}
     samplerates = LaskaCore.samplerates(p)
     samp = all(samplerates .== samplerates[1]) ? samplerates[1] : throw(ErrorException("Samplerates of all clusters not equal"))
-    out = SpikeVector([T[] for _ in 1:ntrigs(p)], samp)
+    out = RelativeSpikeVector([T[] for _ in 1:ntrigs(p)], samp)
     for cluster in clustervector(p)
         if info(cluster, "depth") in depth
             times = spiketimes(cluster)
