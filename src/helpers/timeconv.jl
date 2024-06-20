@@ -8,6 +8,7 @@
 
 # Convenience type for Unitful units of time
 const TUnit{T} = Quantity{T,Unitful.𝐓}
+const FreeTUnit{T} = Unitful.FreeUnits{T,Unitful.𝐓}
 
 """
     timetosamplerate(cluster::T, time::U) where {T<:AbstractCluster, U<:Quantity{<:Number, Unitful.𝐓}}
@@ -76,4 +77,40 @@ function timetosamplerate(V::T, time::U) where {T<:Union{<:AbstractCluster,<:Abs
     return lower:step:upper
 end
 
+
+
+"""
+    sampleratetotime(samplerate::T, time::T, unit::U) where {T<:Real, U<:LaskaCore.FreeTUnit}
+
+Convert a time represented in a samplerate to another unit. `unit` should ba `Unitful.jl` unit of time. Always returns a normal `Float64`.
+`time` may be a single number or a `Vector` of such.
+
+
+# Example
+
+```julia
+# Convert time = 450000 sampled at 30000 Hz to ms (i.e 15000)
+LaskaCore.sampleratetounit(30000, 450000, u"ms")
+
+# Convert time = 450000 sampled at 30000 Hz to µs (i.e 1.5e7)
+LaskaCore.sampleratetounit(30000, 450000, u"ms")
+```
+"""
+function sampleratetotime(samplerate::T, time::T, unit::U) where {T<:Real, U<:LaskaCore.FreeTUnit}
+    ustrip(Float64, unit, (time / samplerate)u"s")
+end
+
+function sampleratetotime!(out::Vector{Float64}, samplerate::Real, times::T, unit::U) where {T<:AbstractVector{<:Real}, U<:LaskaCore.FreeTUnit}
+    for i in eachindex(out)
+        out[i] = ustrip(Float64, unit, (time[i] / samplerate)u"s")
+    end
+end
+
+function sampleratetotime(samplerate::Real, time::T, unit::U) where {T<:AbstractVector{<:Real}, U<:LaskaCore.FreeTUnit}
+    out = similar(time, Float64)
+    @inbounds @simd for i in eachindex(out)
+        @views out[i] = sampleratetotime(samplerate, time[i], unit)
+    end
+    return out
+end
 
