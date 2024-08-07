@@ -59,6 +59,8 @@ Imec Readout Table and a named tuple of the different entries. Each column is a 
 
 For more information on possible entries depending on probetype please see the [SpikeGLX manual](http://billkarsh.github.io/SpikeGLX/Sgl_help/Metadata_30.html)
 
+In order to get the entries of a certain parse `ImroTbl` `Base.keys()` may be used.
+
 # Example
 
 The table may be indexed to as such:
@@ -177,8 +179,8 @@ end
     spikemmap(file::String, nchans::Int)
     spikemmap(file::String, meta::Dict{String, String})
 
-Create a memory map of a spikeGLX .bin file. Requires a path to the `file`, the number of channels.              
-The easiest way to provide this is to pass a parsed .meta file.
+Create a memory map of a spikeGLX .bin file. Requires a path to the `file` and the number of channels.              
+The easiest way to provide the number of channels is to pass a parsed .meta file.
 
 """
 function spikemmap(file::String, nchans::Int)
@@ -198,7 +200,7 @@ end
 """
     tovolts(in::Matrix{Int16}, meta::Dict{String,String})
 
-Convert a Vector/Matrix of a raw spikeGLX recording to volts.
+Convert a Vector/Matrix of a raw spikeGLX AP recording to volts.
 
 The meta expected is the `Dict` returned from [`LaskaCore.getmeta`](@ref) or [`LaskaCore.parseglxmeta`](@ref).
 
@@ -215,11 +217,8 @@ function tovolts!(out::AbstractArray, in::AbstractArray, meta::Dict{String,Strin
     if meta["imDatPrb_type"] == "0"
         tbl = parseimroTbl(meta["~imroTbl"])
         gains = unique(tbl[:APGain])
-        gain = length(gains) == 1 ? Float64(gains[1]) : throw(ErrorException("Multiple gains found in Imec Readout Table"))
-        # tbl = meta["~imroTbl"]
-        # tbl = split(tbl, ")(")
-        # tbl = split(tbl[2], " ")
-        # gain::Float64 = parse(Float64, tbl[4])
+        length(gains) != 1 && throw(ErrorException("Multiple gains found in Imec Readout Table"))
+        gain = Float64(gains[1])
     else
         gain = 80.0
     end

@@ -54,13 +54,13 @@ Direct field access is **not** recommended. Interface functions include:
 
 
 """
-struct RelativeSpikes{T,U,M,S,V} <: AbstractExperiment{T,U,M,S}
+struct RelativeSpikes{T,U,M,S,V,Y} <: AbstractExperiment{T,U,M,S}
     clusterids::Vector{Int64}
     clusters::Vector{RelativeCluster{T,U}}
     trigtimes::S
     meta::M
     info::DataFrame
-    stimtrain::Dict{String,T}
+    stimtrain::Dict{String,Y}
     specs::@NamedTuple{back::V, forward::V, ntrig::Int64}
 end
 

@@ -1,5 +1,6 @@
 ##############################################################
 #
+using CSV: Error
 # Functions for converting times (ms <-> samprate for example)
 #
 ##############################################################
@@ -77,7 +78,32 @@ function timetosamplerate(V::T, time::U) where {T<:Union{<:AbstractCluster,<:Abs
     return lower:step:upper
 end
 
+# Version for entire experiment, returns times for each cluster
+"""
+    timetosampleratevec(p::AbstractExperiment, time)
 
+Converts `time` to the sample rate of each cluster in `p` and returns the result as a Vector.
+
+"""
+function timetosampleratevec(p::AbstractExperiment, time)
+    clusters = clustervector(p)
+    [timetosamplerate(clusters[i], time) for i in eachindex(clusters)]
+end
+
+# Version which returns a single time for an experiment if all times are equal
+"""
+    timetoequalsamplerate(p::AbstractExperiment, time::TUnit)
+
+Converts `time` into the samplerate of `p` if all clusters in `p` have the same samplerate.
+Otherwise returns an error.
+"""
+function timetosamplerate(p::AbstractExperiment, time)
+    all = timetosampleratevec(p, time)
+    if length(unique(all)) != 1
+        throw(ErrorException("Sampletimes of all clusters not equal"))
+    end
+    return all[1]
+end
 
 """
     sampleratetotime(samplerate::T, time::T, unit::U) where {T<:Real, U<:LaskaCore.FreeTUnit}
