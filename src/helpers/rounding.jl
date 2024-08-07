@@ -44,7 +44,7 @@ function roundupvec(in::Vector{T}, period::N) where {T,N}
 end
 
 function roundupvec!(out::Vector{T}, in::Vector{N}, period::T) where {T,N}
-    @inbounds for n in eachindex(out)
+    for n in eachindex(out)
         out[n] = roundup(in[n], period)
     end
 end
@@ -56,7 +56,7 @@ function rounddownvec(in::Vector{T}, period::N) where {T,N}
 end
 
 function rounddownvec!(out::Vector{T}, in::Vector{N}, period::T) where {T,N}
-    @inbounds for n in eachindex(out)
+    for n in eachindex(out)
         out[n] = rounddown(in[n], period)
     end
 end

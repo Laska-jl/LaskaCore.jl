@@ -22,7 +22,6 @@ for s in it
     # Do something based on if s = 1 or s = 0
 end
 
-
 ```
 """
 struct SpikeTrainIterator{T<:Integer}
@@ -61,7 +60,7 @@ function Base.iterate(v::SpikeTrainIterator, state)
     return (0, (state[1] + 1, state[2]))
 end
 
-function Base.eltype(v::SpikeTrainIterator{T}) where {T}
+function Base.eltype(::SpikeTrainIterator{T}) where {T}
     return T
 end
 
@@ -70,5 +69,5 @@ function Base.length(v::SpikeTrainIterator)
 end
 
 function Base.size(v::SpikeTrainIterator)
-    v.t_end - v.t_start
+    (v.t_end - v.t_start,)
 end

@@ -64,7 +64,6 @@ struct RelativeSpikes{T,U,M,S,V} <: AbstractExperiment{T,U,M,S}
     specs::@NamedTuple{back::V, forward::V, ntrig::Int64}
 end
 
-
 """
     getcluster(experiment::T, cluster::Int) where {T<:AbstractExperiment}
 

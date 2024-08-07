@@ -21,7 +21,7 @@ By default, only "good" clusters as per phy output are included. Setting `includ
 
 Clusters may be further filtered based on any variable in "cluster_info.tsv". 
 This is done by passing a `Pair{Symbol, Function}` containing the column to filter by and a function to be applied to aforementioned column (see below for examples).
-The syntax of the filter itself is exactly the same as when filtering a DataFrame, ie `:somevariable => x -> x > 42`.
+The syntax of the filter itself is exactly the same as when filtering a DataFrame, ie `:somevariable => x -> x > 42` in order to only include clusters where `somevariable` in cluster_info.tsv is greater than 42.
 Several filters may be applied by wrapping them in a `Vector`.
 
 # Example 

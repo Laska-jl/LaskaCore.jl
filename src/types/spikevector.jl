@@ -153,14 +153,15 @@ Functions on SpikeVector
 =======================#
 
 """
-    (::Type{SpikeVector{T}})(::UndefInitializer, n, samplerate) where {T}
+    (::Type{SpikeVector{T,U}})(::UndefInitializer, n::Integer, samplerate::U) where {T,U}
 
 
 Initialize a `SpikeVector` of length `n` with `samplerate`
 """
-function (::Type{SpikeVector{T}})(::UndefInitializer, n, samplerate) where {T}
-    SpikeVector{T,typeof(samplerate)}(Vector{T}(undef, n), samplerate)
+function (::Type{SpikeVector{T,U}})(::UndefInitializer, n::Integer, samplerate::U) where {T,U}
+    SpikeVector{T,U}(Vector{T}(undef, n), samplerate)
 end
+
 
 """
     convertsamplerate(V::SpikeVector{T,U}, newsamplerate::N) where {T,U,N}
