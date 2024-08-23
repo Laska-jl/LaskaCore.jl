@@ -4,12 +4,32 @@
 Find the maximum value in a [`RelativeSpikeVector`](@ref).
 
 """
-function maxval(vec::RelativeSpikeVector{T}) where {T}
-    maximum(maximum.(vec))
+function maxval(vec::RelativeSpikeVector, init::T=0) where {T}
+    max::T = init
+    @inbounds @views begin
+        for n in eachindex(vec)
+            for i in eachindex(vec[n])
+                if vec[n][i] > max
+                    max = vec[n][i]
+                end
+            end
+        end
+    end
+    return max
 end
 
-function maxval(vec::Vector{Vector{T}}) where {T}
-    maximum(maximum.(vec))
+function maxval(vec::Vector{Vector{T}}, init::U=0) where {T,U}
+    max::U = init
+    @inbounds @views begin
+        for n in eachindex(vec)
+            for i in eachindex(vec[n])
+                if vec[n][i] > max
+                    max = vec[n][i]
+                end
+            end
+        end
+    end
+    return max
 end
 
 """
@@ -18,12 +38,32 @@ end
 Find the minimum value in a [`RelativeSpikeVector`](@ref).
 
 """
-function minval(vec::RelativeSpikeVector{T}) where {T}
-    minimum(minimum.(vec))
+function minval(vec::RelativeSpikeVector, init::T=0) where {T}
+    min::T = init
+    @inbounds @views begin
+        for n in eachindex(vec)
+            for i in eachindex(vec[n])
+                if vec[n][i] < min
+                    min = vec[n][i]
+                end
+            end
+        end
+    end
+    return min
 end
 
-function minval(vec::Vector{Vector{T}}, init::T=zero(T)) where {T}
-    minimum(minimum.(vec))
+function minval(vec::Vector{Vector{T}}, init::U=0) where {T,U}
+    min = init
+    @inbounds @views begin
+        for n in eachindex(vec)
+            for i in eachindex(vec[n])
+                if vec[n][i] < min
+                    min = vec[n][i]
+                end
+            end
+        end
+    end
+    return min
 end
 
 """
@@ -34,10 +74,10 @@ Returns the extrema of a [`LaskaCore.RelativeSpikeVector`](@ref) or a `Vector{Ve
 """
 function extremevals end
 
-function extremevals(vec::Vector{Vector{T}}) where {T}
-    return minval(vec), maxval(vec)
+function extremevals(vec::Vector{Vector{T}}, init::U=0) where {T,U}
+    return minval(vec, init), maxval(vec, init)
 end
 
-function extremevals(vec::RelativeSpikeVector{T}) where {T}
-    return minval(vec), maxval(vec)
+function extremevals(vec::RelativeSpikeVector, init::U=0) where {U}
+    return minval(vec, init), maxval(vec, init)
 end
