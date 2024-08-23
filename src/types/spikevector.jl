@@ -26,7 +26,6 @@ struct SpikeVector{T,U} <: AbstractSpikeVector{T,U}
     spiketimes::Vector{T}
     samplerate::U
 end
-export SpikeVector
 
 """
     struct RelativeSpikeVector{T,U} <: AbstractSpikeVector{T,U}
@@ -49,7 +48,6 @@ struct RelativeSpikeVector{T,U} <: AbstractSpikeVector{T,U}
     spiketimes::Vector{Vector{T}}
     samplerate::U
 end
-export RelativeSpikeVector
 
 #===============================
 Functions on AbstractSpikeVector
@@ -259,8 +257,6 @@ end
 @inline function Base.setindex!(V::SpikeVector{T}, val::T, i::Int) where {T}
     V.spiketimes[i] = val
 end
-
-
 
 
 """

@@ -2,12 +2,7 @@
 # Functions for importing spikeGLX .bin files |
 #---------------------------------------------#
 
-# function importglx(path::String, meta::Dict, channels, t::U) where {U<:LaskaCore.TUnit}
-#     nchans = meta["nSavedChans"]
-#     
-#
-# end
-
+# Id:s of each probe type
 const NP1_LIKE_PROBES::NTuple{10,Int64} = (0, 1020, 1030, 1100, 1120, 1121, 1122, 1123, 1200, 1300)
 const NP2_SINGLE_MULTIPLEX_SHANK_PROBES::NTuple{3,Int64} = (21, 2003, 2004)
 const NP2_4_SHANK_PROBES::NTuple{3,Int64} = (24, 2013, 2014)
@@ -73,7 +68,7 @@ table[:Channel_id]
 # Will return the channel id of the first channel
 table[1,:Channel_id]
 
-# Will return entries for the first channel
+# Will return all entries for the first channel
 table[1,:]
 
 # Will return the 4th entry of the 1st channel
@@ -304,12 +299,6 @@ function gettrig(t::Vector{T}) where {T<:Real}
     return c[begin:n]
 end
 
-#function gettrig(t::Vector{T}) where {T<:Real}
-#    r = findall(!iszero, t)
-#    p::Matrix{Int64} = hcat(getindex.(r, 1), getindex.(r - circshift(r, 1), 1))
-#    s::Vector{Int64} = @inbounds p[p[:, 2].!=1, 1]
-#    return s
-#end
 
 """
 

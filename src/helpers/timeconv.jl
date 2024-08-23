@@ -83,7 +83,6 @@ end
     timetosampleratevec(p::AbstractExperiment, time)
 
 Converts `time` to the sample rate of each cluster in `p` and returns the result as a Vector.
-
 """
 function timetosampleratevec(p::AbstractExperiment, time)
     clusters = clustervector(p)

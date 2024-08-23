@@ -126,7 +126,7 @@ end
 """
     nspikes(cluster::RelativeCluster)
 
-Returns the total number of spikes in `cluster`.
+Returns the total number of spikes around each trigger in `cluster`.
 """
 function nspikes(cluster::RelativeCluster)
     return length.(spiketimes(cluster))
