@@ -115,6 +115,7 @@ Direct field access is **not** recommended. Basic interface functions include:
 - [`LaskaCore.nspikes`](@ref) -- Returns the number of spikes in each spiketrain.
 - [`LaskaCore.info`](@ref) -- Returns the info of the `Cluster` from "cluster_info.tsv" as a `SubDataFrame`. This is a *view* of the `info` `DataFrame` from the parent `Experiment`.
 - [`LaskaCore.spiketimes`](@ref) -- Returns a Vector containing all spiketimes of the `Cluster`.
+- [`LaskaCore.samplerate`](@ref) -- Returns the samplerate of the spiketimes belonging to the cluster.
 
 """
 struct RelativeCluster{T,U} <: AbstractCluster{T,U}

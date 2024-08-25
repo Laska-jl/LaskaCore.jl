@@ -17,6 +17,7 @@ By default, only "good" clusters as per phy output are included. Setting `includ
 - **Keyword arguments**
     - `filter`: A `Pair` or `Vector{Pair}` allowing clusters to be excluded based on variables in *cluster_info.tsv* (see below for examples).
     - `samplerate`: The samplerate of the spike times. Required if `glxdir` is not specified. If both `glxdir` and `samplerate` is specified the `samplerate` argument will override the samplerate found in the SpikeGLX .meta file.
+    - `includemua`: If `true` clusters not marked as good in KiloSort/Phy will be included. `false` by default.
 
 
 Clusters may be further filtered based on any variable in "cluster_info.tsv". 
@@ -41,8 +42,12 @@ result2 = importphy("phyoutput_directory", "glxoutput_directory", "direct_path_t
 
 ```
 
+# Returns
+
+A [`LaskaCore.PhyOutput`](@ref) struct.
+
 """
-function importphy(phydir::String, glxdir::String, triggerpath::String; filter::Union{Pair,Vector{Pair{Symbol,Function}},Nothing}=nothing, includemua::Bool=false, samplerate::Union{Nothing,Real}=nothing)
+function importphy(phydir::String, glxdir::String="", triggerpath::String=""; filter::Union{Pair,Vector{Pair{Symbol,Function}},Nothing}=nothing, includemua::Bool=false, samplerate::Union{Nothing,Real}=nothing)
 
     if glxdir == "" && isnothing(samplerate)
         throw(ArgumentError("If no spikeGLX directory with a .meta file is provided the sample rate of spiketimes need to be specified"))

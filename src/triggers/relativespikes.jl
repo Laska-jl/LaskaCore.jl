@@ -4,14 +4,17 @@
 """
     relativespikes(p::PhyOutput, stimtrain::Dict{String,T}, back, forward) where {T<:Real}
 
-Returns a `RelativeSpikes` struct which wraps `RelativeCluster`:s and contains only spiketimes occuring `back` ms before triggers or `forward` ms after them.
+Returns a `RelativeSpikes` struct which contains `RelativeCluster`s and contains only spiketimes occuring `back` before triggers or `forward` after them.
+Spiketimes are represented relative to the trigger event. For example a spike occuring 10ms before the trigger will appear as -300 if the sample rate
+is 30 000Hz
 
 # Arguments
 
 All arguments representing time may be provided in a `Unitful.jl` unit or the samplerate of the experiment.
+If one time is provided in a `Unitful` unit of time the others will have to be provided as such as well.
 
 - `p::PhyOutput` -- A PhyOutput struct.
-- `stimtrain` -- A `Dict` describing each trigger event. For example `Dict("CS" => 0u"ms", "US" => 300u"ms")` would mean one event(CS) at trigger and another(US) 300ms after trigger.
+- `stimtrain` -- A `Dict` describing each trigger event. For example `Dict("US" => 0u"ms", "CS" => 300u"ms")` would mean one event (CS) at trigger and another (US) 300ms after trigger.
 - `back` -- Time before trigger to include in each spike train.
 - `forward` -- Time after trigger to include in each spike train.
 

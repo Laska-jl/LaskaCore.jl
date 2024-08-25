@@ -13,13 +13,13 @@ function _populateresdict!(resdict::Dict{C,Vector{T}}, clusters::Vector{C}, time
     end
 end
 
-"""
-    _importclusterstimesinfo(clusterpath::String, timespath::String, infopath::String)
-
-Utility function for importing clusters, spiketimes, and info .tsv-file from phy directory.
-
-If spiketimes or cluster ids are a subtype of `Integer` but not an `Int64` they will be converted to `Int64`.
-"""
+# """
+#     _importclusterstimesinfo(clusterpath::String, timespath::String, infopath::String)
+#
+# Utility function for importing clusters, spiketimes, and info .tsv-file from phy directory.
+#
+# If spiketimes or cluster ids are a subtype of `Integer` but not an `Int64` they will be converted to `Int64`.
+# """
 function _importclusterstimesinfo(clusterpath::String, timespath::String, infopath::String)
     clusters = vec(NPZ.npzread(clusterpath))
     times = vec(NPZ.npzread(timespath))
