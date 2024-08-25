@@ -9,6 +9,7 @@ using Unitful
 
 # Export SpikeVector
 include("types/spikevector.jl")
+export SpikeVector, RelativeSpikeVector
 include("types/cluster.jl")
 # Export AbstracCluster and related methods
 export AbstractCluster, id, nspikes, info, spiketimes, timetosamplerate
@@ -37,6 +38,7 @@ include("triggers/relativespikes.jl")
 export relativespikes
 
 # Importing
+include("import/phyimportutils.jl")
 include("import/importphy.jl")
 # Export function for importing phy output
 export importphy

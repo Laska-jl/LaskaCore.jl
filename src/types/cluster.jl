@@ -112,9 +112,10 @@ Similar to `Cluster{T}` except that the field `spiketimes` is a `Vector{Vector{T
 Direct field access is **not** recommended. Basic interface functions include:
 
 - [`LaskaCore.id`](@ref) -- Returns the Cluster id.
-- [`LaskaCore.nspikes`](@ref) -- Returns the number of spikes in the cluster (Based off length of the `spiketimes` field).
+- [`LaskaCore.nspikes`](@ref) -- Returns the number of spikes in each spiketrain.
 - [`LaskaCore.info`](@ref) -- Returns the info of the `Cluster` from "cluster_info.tsv" as a `SubDataFrame`. This is a *view* of the `info` `DataFrame` from the parent `Experiment`.
 - [`LaskaCore.spiketimes`](@ref) -- Returns a Vector containing all spiketimes of the `Cluster`.
+- [`LaskaCore.samplerate`](@ref) -- Returns the samplerate of the spiketimes belonging to the cluster.
 
 """
 struct RelativeCluster{T,U} <: AbstractCluster{T,U}
@@ -126,10 +127,10 @@ end
 """
     nspikes(cluster::RelativeCluster)
 
-Returns the total number of spikes in `cluster`.
+Returns the total number of spikes around each trigger in `cluster`.
 """
 function nspikes(cluster::RelativeCluster)
-    return sum(length.(spiketimes(cluster)))
+    return length.(spiketimes(cluster))
 end
 
 function Base.show(io::IO, obj::Cluster)

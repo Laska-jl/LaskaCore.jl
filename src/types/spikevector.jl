@@ -26,7 +26,6 @@ struct SpikeVector{T,U} <: AbstractSpikeVector{T,U}
     spiketimes::Vector{T}
     samplerate::U
 end
-export SpikeVector
 
 """
     struct RelativeSpikeVector{T,U} <: AbstractSpikeVector{T,U}
@@ -49,7 +48,6 @@ struct RelativeSpikeVector{T,U} <: AbstractSpikeVector{T,U}
     spiketimes::Vector{Vector{T}}
     samplerate::U
 end
-export RelativeSpikeVector
 
 #===============================
 Functions on AbstractSpikeVector
@@ -105,7 +103,7 @@ Base.lastindex(V::AbstractSpikeVector) = length(V)
 
 @inline Base.empty!(V::AbstractSpikeVector) = Base.empty!(V.spiketimes)
 
-@inline function Base.insert!(V::AbstractSpikeVector{T}, i::Integer, item) where {T}
+@inline function Base.insert!(V::AbstractSpikeVector{T}, i::Integer, item::T) where {T}
     Base.insert!(V.spiketimes, i, item)
 end
 
@@ -153,14 +151,15 @@ Functions on SpikeVector
 =======================#
 
 """
-    (::Type{SpikeVector{T}})(::UndefInitializer, n, samplerate) where {T}
+    (::Type{SpikeVector{T,U}})(::UndefInitializer, n::Integer, samplerate::U) where {T,U}
 
 
 Initialize a `SpikeVector` of length `n` with `samplerate`
 """
-function (::Type{SpikeVector{T}})(::UndefInitializer, n, samplerate) where {T}
-    SpikeVector{T,typeof(samplerate)}(Vector{T}(undef, n), samplerate)
+function (::Type{SpikeVector{T,U}})(::UndefInitializer, n::Integer, samplerate::U) where {T,U}
+    SpikeVector{T,U}(Vector{T}(undef, n), samplerate)
 end
+
 
 """
     convertsamplerate(V::SpikeVector{T,U}, newsamplerate::N) where {T,U,N}
@@ -258,8 +257,6 @@ end
 @inline function Base.setindex!(V::SpikeVector{T}, val::T, i::Int) where {T}
     V.spiketimes[i] = val
 end
-
-
 
 
 """
