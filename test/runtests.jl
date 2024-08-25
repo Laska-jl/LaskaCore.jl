@@ -1,6 +1,8 @@
 using Test
 using LaskaCore
 
+include("Aqua.jl")
+
 @testset "findmax" begin
     alleqspv = RelativeSpikeVector([ones(100) for _ in 1:10], 30)
     alleqv = [ones(100) for _ in 1:10]
@@ -23,3 +25,4 @@ using LaskaCore
     @test LaskaCore.maxval(alleqv) isa eltype(eltype(alleqspv))
 
 end
+
