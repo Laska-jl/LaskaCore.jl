@@ -1,6 +1,5 @@
 ##############################################################
 #
-using CSV: Error
 # Functions for converting times (ms <-> samprate for example)
 #
 ##############################################################
@@ -61,7 +60,7 @@ function timetosamplerate(
 end
 
 
-function timetosamplerate(V::T, time::U) where {T<:Union{<:AbstractCluster,<:AbstractSpikeVector},U<:StepRange{<:TUnit{<:Number}}}
+function timetosamplerate(V::T, time::U) where {T<:Union{<:AbstractCluster,<:AbstractSpikeVector},U::StepRange{<:TUnit{<:Number}}}
     samp = samplerate(V)
     lower = samp * ustrip(Float64, u"s", time[begin])
     step = samp * ustrip(Float64, u"s", time.step)
@@ -70,7 +69,7 @@ function timetosamplerate(V::T, time::U) where {T<:Union{<:AbstractCluster,<:Abs
 end
 
 # Version for non-Int stepranges with Unitful units.
-function timetosamplerate(V::T, time::U) where {T<:Union{<:AbstractCluster,<:AbstractSpikeVector},U<:StepRangeLen{<:TUnit{<:Number}}}
+function timetosamplerate(V::T, time::U) where {T<:Union{<:AbstractCluster,<:AbstractSpikeVector},U::StepRangeLen{<:TUnit{<:Number}}}
     samp = samplerate(V)
     lower = samp * ustrip(Float64, u"s", time[begin])
     step = samp * ustrip(Float64, u"s", time.step)
@@ -125,7 +124,7 @@ end
 
 function sampleratetotime!(out::Vector{<:Real}, samplerate::Real, times::T, unit::U) where {T<:AbstractVector{<:Real},U<:LaskaCore.FreeTUnit}
     for i in eachindex(out)
-        out[i] = ustrip(Float64, unit, (time[i] / samplerate)u"s")
+        out[i] = ustrip(Float64, unit, (times[i] / samplerate)u"s")
     end
 end
 

@@ -19,7 +19,7 @@ abstract type AbstractCluster{T,U} end
 """
     struct Cluster{T,U} <: AbstractCluster{T,U}
         id::Int64
-        info::SubDataFrame
+        info::DataFrame
         spiketimes::SpikeVector{T,U}
     end
 
@@ -29,7 +29,7 @@ Direct field access is **not** recommended. Basic interface functions include:
 
 - [`LaskaCore.id`](@ref) -- Returns the Cluster id.
 - [`LaskaCore.nspikes`](@ref) -- Returns the number of spikes in the cluster (Based off length of the `spiketimes` field).
-- [`LaskaCore.info`](@ref) -- Returns the info of the `Cluster` from "cluster_info.tsv" as a `DataFrame` row. This is a *view* of the DataFrame in the parent `Experiment`.
+- [`LaskaCore.info`](@ref) -- Returns the info of the `Cluster` from "cluster_info.tsv" as a `DataFrame` row.
 - [`LaskaCore.spiketimes`](@ref) -- Returns a Vector containing all spiketimes of the `Cluster`.
 
 
@@ -64,7 +64,7 @@ end
     info(cluster::T) where {T<:AbstractCluster}
     info(cluster::T, var::String) where {T<:AbstractCluster}
 
-Returns info (as dict) about `cluster`. A string may be supplied to return a specific entry.
+Returns info (as a DataFrame) about `cluster`. A string may be supplied to return a specific entry.
 """
 function info end
 
@@ -75,6 +75,7 @@ end
 function info(cluster::T, var::String) where {T<:AbstractCluster}
     return cluster.info[1, var]
 end
+
 
 
 """
@@ -113,7 +114,7 @@ Direct field access is **not** recommended. Basic interface functions include:
 
 - [`LaskaCore.id`](@ref) -- Returns the Cluster id.
 - [`LaskaCore.nspikes`](@ref) -- Returns the number of spikes in each spiketrain.
-- [`LaskaCore.info`](@ref) -- Returns the info of the `Cluster` from "cluster_info.tsv" as a `SubDataFrame`. This is a *view* of the `info` `DataFrame` from the parent `Experiment`.
+- [`LaskaCore.info`](@ref) -- Returns the info of the `Cluster` from "cluster_info.tsv" as a `DataFrame` row.
 - [`LaskaCore.spiketimes`](@ref) -- Returns a Vector containing all spiketimes of the `Cluster`.
 - [`LaskaCore.samplerate`](@ref) -- Returns the samplerate of the spiketimes belonging to the cluster.
 

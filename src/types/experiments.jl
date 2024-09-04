@@ -18,10 +18,11 @@ Struct for holding Kilosort output preprocessed in Phy. Should be instantiated u
 Direct field access is **not** recommended. Basic interface functions include:
 
 - [`LaskaCore.clusterids`](@ref) -- Returns all cluster ID:s as a Vector.
+- [`LaskaCore.info`](@ref) -- Returns "cluster\_info.tsv" as a DataFrame.
 - [`LaskaCore.getcluster`](@ref) -- Returns a specific [`LaskaCore.Cluster`](@ref).
-- [`LaskaCore.clustervector`](@ref) -- Returns all [`LaskaCore.Cluster`](@ref):s in a Vector.
+- [`LaskaCore.clustervector`](@ref) -- Returns all [`LaskaCore.Cluster`](@ref)s in a Vector.
 - [`LaskaCore.getmeta`](@ref) -- Returns the spikeGLX meta as a Dict or a specific entry if specified.
-- [`LaskaCore.triggertimes`](@ref) -- Returns the trigger event times as a Vector.
+- [`LaskaCore.triggertimes`](@ref) -- Returns the trigger event indices as a Vector.
 - [`LaskaCore.ntrigs`](@ref) -- Returns the length of the trigger event time Vector.
 
 """
@@ -45,12 +46,12 @@ Direct field access is **not** recommended. Interface functions include:
 
 - [`LaskaCore.clusterids`](@ref) -- Returns all cluster ID:s as a Vector.
 - [`LaskaCore.getcluster`](@ref) -- Returns a specific [`LaskaCore.Cluster`](@ref).
-- [`LaskaCore.clustervector`](@ref) -- Returns all [`LaskaCore.Cluster`](@ref):s in a Vector.
+- [`LaskaCore.clustervector`](@ref) -- Returns all [`LaskaCore.Cluster`](@ref)s in a Vector.
 - [`LaskaCore.getmeta`](@ref) -- Returns the spikeGLX meta as a Dict or a specific entry if specified.
 - [`LaskaCore.triggertimes`](@ref) -- Returns the trigger event times as a Vector.
 - [`LaskaCore.ntrigs`](@ref) -- Returns the length of the trigger event time Vector.
 - [`LaskaCore.stimtimes`](@ref) -- Returns a dict containging the stimulation labels and times specified when calling [`LaskaCore.relativespikes`](@ref).
-- [`LaskaCore.relativespecs`] -- Returns a dict with the `back` and `forward` values specified when calling [`LaskaCore.relativespikes`](@ref) as well as the number of trigger events.
+- [`LaskaCore.relativespecs`] -- Returns a `NamedTuple` with the `back` and `forward` values specified when calling [`LaskaCore.relativespikes`](@ref) as well as the number of trigger events.
 
 
 """
@@ -167,7 +168,7 @@ end
     relativespecs(rel::RelativeSpikes{T}, spec::String) where {T<:Real}
 
 
-Returns a Dict containing the 'specs' of a `RelativeSpikes` struct.                         
+Returns a `NamedTuple` containing the 'specs' of a `RelativeSpikes` struct.                         
 Includes the `back` and `forward` variables used as well as the number of trigger events (`ntrigs`).
 """
 function relativespecs end

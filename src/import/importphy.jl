@@ -21,17 +21,17 @@ By default, only "good" clusters as per phy output are included. Setting `includ
 
 
 Clusters may be further filtered based on any variable in "cluster_info.tsv". 
-This is done by passing a `Pair{Symbol, Function}` containing the column to filter by and a function to be applied to aforementioned column (see below for examples).
+This can be done by passing a `Pair{Symbol, Function}` containing the column to filter by and a function to be applied to aforementioned column (see below for examples).
 The syntax of the filter itself is exactly the same as when filtering a DataFrame, ie `:somevariable => x -> x > 42` in order to only include clusters where `somevariable` in cluster_info.tsv is greater than 42.
-Several filters may be applied by wrapping them in a `Vector`.
+Several filters may be applied by wrapping them in a `Vector`. For further information see the `DataFrames.jl` [documentation on filter](https://dataframes.juliadata.org/stable/lib/functions/#Base.filter).
 
 # Example 
 ```Julia
 ### Exclude any cluster with a mean firing rate less than 1:
 
-#                            A `Symbol` identifying the column to apply the filtering function to <---vvv
+#                            A `Symbol` identifying the column to apply the filtering function to ----vvv
 result = importphy("phyoutput_directory", "glxoutput_directory", "direct_path_to_triggerfile"; filter=:fr => x -> x > 1)
-#                                                        An anonymous function returning `true` if x > 1 <---^^^^^^^^^^
+#                                                        An anonymous function returning `true` if x > 1 ----^^^^^^^^^^
 
 
 ### Exclude any cluster with a mean firing rate less than 1 and/or amp less than 30

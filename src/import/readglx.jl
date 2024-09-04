@@ -58,7 +58,7 @@ In order to get the entries of a certain parse `ImroTbl` `Base.keys()` may be us
 
 # Example
 
-The table may be indexed to as such:
+The table may be indexed into as such:
 ```julia
 table = LaskaCore.parseimroTbl(SomePhyOutput)
 
