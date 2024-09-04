@@ -152,8 +152,6 @@ end
 Returns the `cluster_info.tsv` attached to the `experiment` in the form of a `DataFrame`.
 If `var` is provided returns a `Vector` of the matching column.
 """
-function info end
-
 function info(experiment::T) where {T<:AbstractExperiment}
     return experiment.info
 end

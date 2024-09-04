@@ -60,7 +60,7 @@ function timetosamplerate(
 end
 
 
-function timetosamplerate(V::T, time::U) where {T<:Union{<:AbstractCluster,<:AbstractSpikeVector},U::StepRange{<:TUnit{<:Number}}}
+function timetosamplerate(V::T, time::U) where {T<:Union{<:AbstractCluster,<:AbstractSpikeVector},U<:StepRange{<:TUnit{<:Number}}}
     samp = samplerate(V)
     lower = samp * ustrip(Float64, u"s", time[begin])
     step = samp * ustrip(Float64, u"s", time.step)
@@ -69,7 +69,7 @@ function timetosamplerate(V::T, time::U) where {T<:Union{<:AbstractCluster,<:Abs
 end
 
 # Version for non-Int stepranges with Unitful units.
-function timetosamplerate(V::T, time::U) where {T<:Union{<:AbstractCluster,<:AbstractSpikeVector},U::StepRangeLen{<:TUnit{<:Number}}}
+function timetosamplerate(V::T, time::U) where {T<:Union{<:AbstractCluster,<:AbstractSpikeVector},U<:StepRangeLen{<:TUnit{<:Number}}}
     samp = samplerate(V)
     lower = samp * ustrip(Float64, u"s", time[begin])
     step = samp * ustrip(Float64, u"s", time.step)

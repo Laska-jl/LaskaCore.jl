@@ -66,8 +66,6 @@ end
 
 Returns info (as a DataFrame) about `cluster`. A string may be supplied to return a specific entry.
 """
-function info end
-
 function info(cluster::T) where {T<:AbstractCluster}
     return cluster.info
 end
