@@ -18,7 +18,7 @@ Struct for holding Kilosort output preprocessed in Phy. Should be instantiated u
 Direct field access is **not** recommended. Basic interface functions include:
 
 - [`LaskaCore.clusterids`](@ref) -- Returns all cluster ID:s as a Vector.
-- [`LaskaCore.info`](@ref) -- Returns "cluster\_info.tsv" as a DataFrame.
+- [`LaskaCore.info`](@ref) -- Returns "cluster_info.tsv" as a DataFrame.
 - [`LaskaCore.getcluster`](@ref) -- Returns a specific [`LaskaCore.Cluster`](@ref).
 - [`LaskaCore.clustervector`](@ref) -- Returns all [`LaskaCore.Cluster`](@ref)s in a Vector.
 - [`LaskaCore.getmeta`](@ref) -- Returns the spikeGLX meta as a Dict or a specific entry if specified.
