@@ -15,31 +15,31 @@ abstract type AbstractNPProbe end
 struct NP1Like <: AbstractNPProbe end
 
 function probetypes(::Type{NP1Like})
-    Set(NP1_LIKE_PROBES)
+    NP1_LIKE_PROBES
 end
 
 struct NP2Single <: AbstractNPProbe end
 
 function probetypes(::Type{NP2Single})
-    Set(NP2_SINGLE_MULTIPLEX_SHANK_PROBES)
+    NP2_SINGLE_MULTIPLEX_SHANK_PROBES
 end
 
 struct NP24Shank <: AbstractNPProbe end
 
 function probetypes(::Type{NP24Shank})
-    Set(NP2_4_SHANK_PROBES)
+    NP2_4_SHANK_PROBES
 end
 
 struct NPQuad <: AbstractNPProbe end
 
 function probetypes(::Type{NPQuad})
-    Set(NP_TYPE_2020_QUAD_PROBES)
+    NP_TYPE_2020_QUAD_PROBES
 end
 
 struct NPUHDProgrammable <: AbstractNPProbe end
 
 function probetypes(::Type{NPUHDProgrammable})
-    Set(NP_UHD_PROGRAMMABLE_PROBES)
+    NP_UHD_PROGRAMMABLE_PROBES
 end
 
 """
@@ -103,7 +103,7 @@ Returns a [`LaskaCore.ImroTbl`](@ref)
 function parseimroTbl(tbl)
     s = split(tbl[begin+1:end-1], ")(")
     ptype, nchans = parse.(Int64, split(s[1], ","))
-    if ptype in probetypes(NP1Like)
+    if ptype in Set(probetypes(NP1Like))
         __parseimroTbl(s, nchans, NP1Like)
     else
         throw(ErrorException("Parsing function for probe $ptype not implemented"))
@@ -201,7 +201,6 @@ The meta expected is the `Dict` returned from [`LaskaCore.getmeta`](@ref) or [`L
 
 """
 function tovolts(in::AbstractArray, meta::Dict{String,String})
-    # TODO: Fix these so they can use vectors and arrays
     out = similar(in, Float64)
     return tovolts!(out, in, meta)
 end
@@ -212,7 +211,7 @@ function tovolts!(out::AbstractArray, in::AbstractArray, meta::Dict{String,Strin
     if meta["imDatPrb_type"] == "0"
         tbl = parseimroTbl(meta["~imroTbl"])
         gains = unique(tbl[:APGain])
-        length(gains) != 1 && throw(ErrorException("Multiple gains found in Imec Readout Table"))
+        !isone(length(gains)) && throw(ErrorException("Multiple gains found in Imec Readout Table"))
         gain = Float64(gains[1])
     else
         gain = 80.0
@@ -224,7 +223,7 @@ end
 
 function tovolts!(out::AbstractArray{<:AbstractFloat}, in::AbstractArray, cfactor::AbstractFloat)
     if size(out) != size(in)
-        throw(ArgumentError("out and in matrices should have the same dimensions!"))
+        throw(ArgumentError("Out and in matrices should have the same dimensions!"))
     end
     for i in eachindex(out)
         out[i] = in[i] * cfactor
