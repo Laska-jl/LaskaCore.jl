@@ -32,6 +32,7 @@ struct PhyOutput{T,U,M,S} <: AbstractExperiment{T,U,M,S}
     trigtimes::S
     meta::M
     info::DataFrame
+    dir::String
 end
 
 
@@ -63,6 +64,16 @@ struct RelativeSpikes{T,U,M,S,V,Y} <: AbstractExperiment{T,U,M,S}
     info::DataFrame
     stimtrain::Dict{String,Y}
     specs::@NamedTuple{back::V, forward::V, ntrig::Int64}
+    dir::String
+end
+
+"""
+    dir(experiment::AbstractExperiment)
+
+Returns the Phy/KiloSort output directory that was specified on creation of `experiment`.
+"""
+function dir(experiment::AbstractExperiment)
+    experiment.dir
 end
 
 """
@@ -228,3 +239,4 @@ The samplerates are in the same order as the vector returned from [`LaskaCore.cl
 function samplerates(experiment::AbstractExperiment)
     samplerate.(clustervector(experiment))
 end
+

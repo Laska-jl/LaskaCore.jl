@@ -137,6 +137,10 @@ function __parseimroTbl(s, nchans::Integer, ::Type{NP1Like})
     }}(outm, entries)
 end
 
+function names(tbl::AbstractImroTbl)
+    keys(tbl.entries)
+end
+
 function Base.getindex(t::AbstractImroTbl, e::Symbol)
     t.table[:, t.entries[e]]
 end
@@ -315,3 +319,11 @@ function parseglxmeta(file::String)
     return Dict{String,String}(String(i[1]) => String(i[2]) for i in metaraw)
 end
 
+
+function parsesnsChanMap(map::String)
+    lines = split(map, ")(")
+    lines[begin] = lines[begin][begin+1:end]
+    lines[end] = lines[end][begin:end-1]
+    lines = String.(hcat(split.(lines, r"[,:;]")...))
+    return permutedims(lines, (2, 1))
+end

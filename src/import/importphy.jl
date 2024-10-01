@@ -122,5 +122,5 @@ function importphy(phydir::String, glxdir::String="", triggerpath::String=""; fi
         push!(clustervec, Cluster(id, inf, SpikeVector(sort!(resdict[id]), samprate)))
     end
 
-    return PhyOutput(idvec, clustervec, triggers, metadict, info)
+    return PhyOutput(idvec, clustervec, triggers, metadict, info, phydir)
 end

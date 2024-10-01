@@ -6,6 +6,8 @@ using DataFrames
 using Mmap
 using Dates
 using Unitful
+using DSP
+using Statistics
 
 # Export SpikeVector
 include("types/spikevector.jl")
@@ -22,6 +24,7 @@ export AbstractExperiment,
     getcluster, ntrigs, clusterids, triggertimes, clustervector, getmeta
 export PhyOutput
 export RelativeSpikes, relativespecs, stimtimes
+
 
 
 # Helper functions
@@ -44,11 +47,15 @@ include("import/importphy.jl")
 export importphy
 include("import/importmisc.jl")
 include("import/readglx.jl")
+include("import/importwave.jl")
 # Export glx reading functions
 export spikemmap, tovolts, tovolts!, parseglxmeta
 
+
 include("filter/filterexperiment.jl")
 include("filter/filterspikevecs.jl")
+
+include("waveform/extractwaveforms.jl")
 
 include("helpers/iterators.jl")
 
