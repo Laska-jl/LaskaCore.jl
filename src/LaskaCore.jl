@@ -35,6 +35,7 @@ export spikesatdepth
 include("helpers/unpackvector.jl")
 include("helpers/isntempty.jl")
 include("helpers/findmax.jl")
+include("helpers/isiviolations.jl")
 
 # Work around triggers
 include("triggers/relativespikes.jl")
