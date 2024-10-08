@@ -1,10 +1,19 @@
 # Detects ISI-violations, ie ISIs below a certain threshold
 
 """
-    isiviolations(spikes::Vector{T}, threshold::T) where {T<:Real}
+    isiviolations(spikes, threshold) where {T<:Real}
 
-Finds and returns a `Vector{Int64}` containing the indices of ISI violations.
+Finds and the indices of ISI violations.
 Returns an empty vector if no violations are found.
+
+`spikes` may be a: 
+
+- `Vector{<:Real}`
+- `Vector{<:Vector{<:Real}}`
+- `SpikeVector`
+- `RelativeSpikeVector`
+
+If `spikes` is a `SpikeVector` or `RelativeSpikeVector` `threshold` may be a `Unitful.jl` unit of time.
 
 A violation is defined as an ISI less than or equal to `threshold`.
 Indices returned are the second spike in the pairs that give rise to a violation.
@@ -12,7 +21,7 @@ Indices returned are the second spike in the pairs that give rise to a violation
 For example, if threshold = 1
 
 ```console
-             *  * 
+             *  *
 [0, 2, 4, 6, 7, 8, 10]
 ```
 
