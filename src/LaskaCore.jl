@@ -37,6 +37,9 @@ include("helpers/isntempty.jl")
 include("helpers/findmax.jl")
 include("helpers/isiviolations.jl")
 
+include("quality/stability.jl")
+include("quality/missed.jl")
+
 # Work around triggers
 include("triggers/relativespikes.jl")
 export relativespikes
