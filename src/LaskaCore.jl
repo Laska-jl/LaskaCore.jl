@@ -8,6 +8,9 @@ using Dates
 using Unitful
 using DSP
 using Statistics
+using StatsBase
+import Distributions: Normal, cdf
+import ImageFiltering: imfilter, Kernel
 
 # Export SpikeVector
 include("types/spikevector.jl")
@@ -35,10 +38,7 @@ export spikesatdepth
 include("helpers/unpackvector.jl")
 include("helpers/isntempty.jl")
 include("helpers/findmax.jl")
-include("helpers/isiviolations.jl")
 
-include("quality/stability.jl")
-include("quality/missed.jl")
 
 # Work around triggers
 include("triggers/relativespikes.jl")
