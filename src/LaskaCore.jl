@@ -29,7 +29,6 @@ export PhyOutput
 export RelativeSpikes, relativespecs, stimtimes
 
 
-
 # Helper functions
 include("helpers/timeconv.jl")
 include("helpers/rounding.jl")
