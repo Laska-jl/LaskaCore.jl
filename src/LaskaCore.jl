@@ -9,8 +9,6 @@ using Unitful
 using DSP
 using Statistics
 using StatsBase
-import Distributions: Normal, cdf
-import ImageFiltering: imfilter, Kernel
 
 # Export SpikeVector
 include("types/spikevector.jl")

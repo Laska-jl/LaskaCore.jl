@@ -26,9 +26,9 @@ Direct field access is **not** recommended. Basic interface functions include:
 - [`LaskaCore.ntrigs`](@ref) -- Returns the length of the trigger event time Vector.
 
 """
-struct PhyOutput{T,U,M,S} <: AbstractExperiment{T,U,M,S}
+struct PhyOutput{T,U,M,S,V} <: AbstractExperiment{T,U,M,S}
     clusterids::Vector{Int64}
-    clusters::Vector{Cluster{T,U}}
+    clusters::Vector{Cluster{T,U,V}}
     trigtimes::S
     meta::M
     info::DataFrame
