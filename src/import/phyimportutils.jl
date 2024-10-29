@@ -1,6 +1,6 @@
 # Returns a dict with keys from 'ids' and values 
 # of vectors of spiketimes sorted according to their cluster.
-function _sortspiketimes(clusters::Vector{C}, times::Vector{T}, ids::Vector{I}, amps::Vector{U}) where {C,T,I,U}
+function _sortspiketimes(clusters::AbstractVector{C}, times::AbstractVector{T}, ids::AbstractVector{I}, amps::AbstractVector{U}) where {C,T,I,U}
     d = Dict{C,Tuple{Vector{T}, Vector{U}}}(C(c) => (Vector{T}(undef, 0), Vector{U}(undef, 0)) for c in ids)
     _populateresdict!(d, clusters, times, amps)
     return d

@@ -60,8 +60,7 @@ function importphy(phydir::String, glxdir::String="", triggerpath::String=""; fi
 
     clusters, times, info, amps = _importclusterstimesinfoamp(clusterpath, timespath, infopath, amppath)
 
-    idvec = info[!, "cluster_id"]
-
+    idvec = info[!, "cluster_id"] |> vec
 
     resdict = _sortspiketimes(clusters, times, idvec, amps)
 
