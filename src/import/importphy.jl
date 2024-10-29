@@ -54,15 +54,16 @@ function importphy(phydir::String, glxdir::String="", triggerpath::String=""; fi
     end
 
     clusterpath = joinpath(phydir, "spike_clusters.npy")
+    amppath = joinpath(phydir, "amplitudes.npy")
     timespath = joinpath(phydir, "spike_times.npy")
     infopath = joinpath(phydir, "cluster_info.tsv")
 
-    clusters, times, info = _importclusterstimesinfo(clusterpath, timespath, infopath)
+    clusters, times, info, amps = _importclusterstimesinfoamp(clusterpath, timespath, infopath, amppath)
 
     idvec = info[!, "cluster_id"]
 
 
-    resdict = _sortspiketimes(clusters, times, idvec)
+    resdict = _sortspiketimes(clusters, times, idvec, amps)
 
     if !includemua
         isgood(group) = group == "good"
@@ -115,12 +116,14 @@ function importphy(phydir::String, glxdir::String="", triggerpath::String=""; fi
         metadict = nothing
     end
 
-    clustervec = Vector{Cluster{eltype(times),typeof(samprate)}}(undef, 0)
+    clustervec = Vector{Cluster{eltype(times),typeof(samprate), eltype(amps)}}(undef, 0)
 
-    for id in idvec
-        inf = info[findall(x -> x == id, info[!, "cluster_id"]), :]
-        push!(clustervec, Cluster(id, inf, SpikeVector(sort!(resdict[id]), samprate)))
-    end
+    __populateclustervec!(clustervec, idvec, info, samprate, resdict)
 
-    return PhyOutput(idvec, clustervec, triggers, metadict, info)
+    # for id in idvec
+    #     inf = info[findall(x -> x == id, info[!, "cluster_id"]), :]
+    #     push!(clustervec, Cluster(id, inf, SpikeVector(sort!(resdict[id]), samprate)))
+    # end
+
+    return PhyOutput(idvec, clustervec, triggers, metadict, info, phydir)
 end

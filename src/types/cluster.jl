@@ -7,20 +7,21 @@
 
 
 """
-    abstract type AbstractCluster{T,U} end
+    abstract type AbstractCluster{T,U,V} end
 
 Parent type to concrete types representing single clusters.
 
 """
-abstract type AbstractCluster{T,U} end
+abstract type AbstractCluster end
 
 
 
 """
-    struct Cluster{T,U} <: AbstractCluster{T,U}
+    struct Cluster{T,U,V} <: AbstractCluster{T,U,V}
         id::Int64
         info::DataFrame
         spiketimes::SpikeVector{T,U}
+        amplitudes::Vector{V}
     end
 
 Struct for holding a single Cluster.
@@ -34,10 +35,11 @@ Direct field access is **not** recommended. Basic interface functions include:
 
 
 """
-struct Cluster{T,U} <: AbstractCluster{T,U}
+struct Cluster{T,U,V} <: AbstractCluster
     id::Int64
     info::DataFrame
     spiketimes::SpikeVector{T,U}
+    amplitudes::Vector{V}
 end
 
 
@@ -60,6 +62,10 @@ function nspikes(cluster::Cluster)
     return length(cluster.spiketimes)
 end
 
+function amplitudes(cluster::Cluster)
+    cluster.amplitudes
+end
+
 """
     info(cluster::T) where {T<:AbstractCluster}
     info(cluster::T, var::String) where {T<:AbstractCluster}
@@ -74,16 +80,15 @@ function info(cluster::T, var::String) where {T<:AbstractCluster}
     return cluster.info[1, var]
 end
 
-
-
 """
-    spiketimes(cluster::Cluster::T) where {T<:AbstractCluster}
+    spiketimes(cluster::T) where {T<:AbstractCluster}
 
 Returns the spiketimes of `cluster`.
 """
 function spiketimes(cluster::T) where {T<:AbstractCluster}
     return cluster.spiketimes
 end
+
 
 """
     samplerate(cluster::AbstractCluster)
@@ -98,7 +103,7 @@ end
 
 
 """
-    struct RelativeCluster{T,U} <: AbstractCluster{T,U}
+    struct RelativeCluster{T,U} <: AbstractCluster
         id::Int64
         info::SubDataFrame
         spiketimes::RelativeSpikeVector{T,U}
@@ -117,7 +122,7 @@ Direct field access is **not** recommended. Basic interface functions include:
 - [`LaskaCore.samplerate`](@ref) -- Returns the samplerate of the spiketimes belonging to the cluster.
 
 """
-struct RelativeCluster{T,U} <: AbstractCluster{T,U}
+struct RelativeCluster{T,U} <: AbstractCluster
     id::Int64
     info::DataFrame
     spiketimes::RelativeSpikeVector{T,U}

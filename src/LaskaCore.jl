@@ -6,6 +6,9 @@ using DataFrames
 using Mmap
 using Dates
 using Unitful
+using DSP
+using Statistics
+using StatsBase
 
 # Export SpikeVector
 include("types/spikevector.jl")
@@ -33,6 +36,7 @@ include("helpers/unpackvector.jl")
 include("helpers/isntempty.jl")
 include("helpers/findmax.jl")
 
+
 # Work around triggers
 include("triggers/relativespikes.jl")
 export relativespikes
@@ -44,11 +48,15 @@ include("import/importphy.jl")
 export importphy
 include("import/importmisc.jl")
 include("import/readglx.jl")
+include("import/importwave.jl")
 # Export glx reading functions
 export spikemmap, tovolts, tovolts!, parseglxmeta
 
+
 include("filter/filterexperiment.jl")
 include("filter/filterspikevecs.jl")
+
+include("waveform/extractwaveforms.jl")
 
 include("helpers/iterators.jl")
 

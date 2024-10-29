@@ -27,7 +27,6 @@ function relativespikes(p::PhyOutput{T,U,M,S}, stimtrain::Dict{String,V}, back::
     idvec = Vector{Int}(undef, 0)
     clustervec = Vector{RelativeCluster{T,U}}(undef, 0)
     for cluster in clustervector(p)
-        samprate = samplerate(cluster)
         resvec = RelativeSpikeVector{T}(undef, length(triggertimes(p)), samplerate(cluster))
         for n in eachindex(resvec)
             resvec[n] = T[]
@@ -39,7 +38,7 @@ function relativespikes(p::PhyOutput{T,U,M,S}, stimtrain::Dict{String,V}, back::
         )
         push!(idvec, id(cluster))
     end
-    return RelativeSpikes(idvec, clustervec, triggertimes(p), getmeta(p), info(p), stimtrain, specs)
+    return RelativeSpikes(idvec, clustervec, triggertimes(p), getmeta(p), info(p), stimtrain, specs, p.dir)
 end
 
 function relativespikes(p::PhyOutput, stimtrain::Dict, back::TUnit, forward::TUnit)
