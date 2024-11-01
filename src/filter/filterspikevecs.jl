@@ -56,7 +56,7 @@ function filterstims(spikes::AbstractVector{T}, stimtimes::AbstractVector{T}, wi
         inds = findall(x -> x < stimwindows[i][end], cur_view)
         v = @view cur_view[inds]
         push!(out, filter(x -> x < stimwindows[i][begin], v))
-        startind += inds[end]
+        startind += length(inds) > 0 ? inds[end] : 1
     end
     return out
 end
