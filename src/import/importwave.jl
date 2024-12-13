@@ -15,9 +15,8 @@ Import raw waveforms surrounding spiketimes `sp` from a `.ap.bin` file.
 - `ch`: Optional argument specifying channel(s) to include. If omitted all AP channels are included. May be an `Integer`, `AbstractUnitRange` or `AbstractVector{<:Integer}`.
 """
 function importwaves end
-public importwaves
 
-function importwaves(binp::String, sp::AbstractVector{T}, meta::Dict{String,String}, win::Tuple{<:T,<:T}) where {T <: Integer}
+function importwaves(binp::String, sp::AbstractVector{T}, meta::Dict{String,String}, win::Tuple{<:T,<:T}) where {T<:Integer}
     mm = spikemmap(binp, meta)
 
     Imax = parse(Float32, meta["imMaxInt"])
@@ -32,7 +31,7 @@ function importwaves(binp::String, sp::AbstractVector{T}, meta::Dict{String,Stri
     end
     cfactor = Vmax / Imax / gain
 
-    n_AP_chans = parse(Int64, parsesnsChanMap(meta["~snsChanMap"])[1,1])
+    n_AP_chans = parse(Int64, parsesnsChanMap(meta["~snsChanMap"])[1, 1])
 
     # out = Array{Float32}(undef, n_AP_chans, win[1] + win[2] + 1, length(sp))
 
@@ -50,7 +49,7 @@ function importwaves(binp::String, sp::AbstractVector{T}, meta::Dict{String,Stri
 end
 
 
-function importwaves(binp::String, sp::AbstractVector{T}, meta::Dict{String,String}, win::Tuple{<:T,<:T}, ch::Union{<:Integer, <:AbstractUnitRange, <:AbstractVector{<:Integer}}) where {T <: Integer}
+function importwaves(binp::String, sp::AbstractVector{T}, meta::Dict{String,String}, win::Tuple{<:T,<:T}, ch::Union{<:Integer,<:AbstractUnitRange,<:AbstractVector{<:Integer}}) where {T<:Integer}
     mm = spikemmap(binp, meta)
 
     Imax = parse(Float32, meta["imMaxInt"])
@@ -65,11 +64,8 @@ function importwaves(binp::String, sp::AbstractVector{T}, meta::Dict{String,Stri
     end
     cfactor = Vmax / Imax / gain
 
-    n_AP_chans = parse(Int64, parsesnsChanMap(meta["~snsChanMap"])[1,1])
+    n_AP_chans = parse(Int64, parsesnsChanMap(meta["~snsChanMap"])[1, 1])
 
-    # out = Array{Float32}(undef, n_AP_chans, win[1] + win[2] + 1, length(sp))
-
-    # for i in eachindex(sp)
     inds = __solve_indices(sp, win)
     raw = mm[ch, inds]
 
@@ -85,12 +81,12 @@ end
 
 # Returns a vector of indices which, when applied to an array/vector
 # returns the data sp - win[1]:sp + win[1] for each element of sp
-function __solve_indices(sp::AbstractVector{T}, win::Tuple{T, T}) where {T <: Integer}
+function __solve_indices(sp::AbstractVector{T}, win::Tuple{T,T}) where {T<:Integer}
     winlen = sum(win) + 1
     out = Vector{T}(undef, length(sp) * winlen)
     idx_start = 1
     for i in eachindex(sp)
-        out[idx_start:idx_start + winlen - 1] .= sp[i]-win[1]:sp[i]+win[2]
+        out[idx_start:idx_start+winlen-1] .= sp[i]-win[1]:sp[i]+win[2]
         idx_start += winlen
     end
     return out

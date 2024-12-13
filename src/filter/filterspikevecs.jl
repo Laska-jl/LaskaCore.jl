@@ -61,6 +61,22 @@ function filterstims(spikes::AbstractVector{T}, stimtimes::AbstractVector{T}, wi
     return out
 end
 
+
+function filterstims(spikes::AbstractVector{T}, stimtimes::AbstractVector{T}, window::Tuple{<:Real, <:Real}) where {T}
+	stimwindows = [stimtimes[i] - window[1]:stimtimes[i]+window[2] for i in eachindex(stimtimes)]
+
+    out = Vector{T}[]
+    startind = 1
+    for i in eachindex(stimwindows)
+        cur_view = @view spikes[startind:end]
+        inds = findall(x -> x < stimwindows[i][end], cur_view)
+        v = @view cur_view[inds]
+        push!(out, filter(x -> x < stimwindows[i][begin], v))
+        startind += length(inds) > 0 ? inds[end] : 1
+    end
+    return out
+end
+
 function anyin(v)
     x -> any(in.(x, v))
 end
