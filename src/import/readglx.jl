@@ -178,7 +178,7 @@ end
     spikemmap(file::String, nchans::Int)
     spikemmap(file::String, meta::Dict{String, String})
 
-Create a memory map of a spikeGLX .bin file. Requires a path to the `file` and the number of channels.              
+Create a read-only memory map of a spikeGLX .bin file. Requires a path to the `file` and the number of channels.
 The easiest way to provide the number of channels is to pass a parsed .meta file.
 
 """
@@ -290,6 +290,7 @@ function gettrig(t::Vector{T}) where {T<:Real}
     c = Vector{Int64}(undef, length(r))
     n = 1
     # Add the first index of r to c since it will always mark the start of an event.
+    # BUG: This errors when there no triggers are found, ie all in r is zero
     c[begin] = r[begin]
     # Iterate over all indices except first since it's already covered,
     @views for i in Iterators.drop(eachindex(r), 1)
