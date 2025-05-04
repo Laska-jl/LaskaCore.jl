@@ -41,7 +41,6 @@ end
 
 Similar to [`LaskaCore.PhyOutput`](@ref). However, instead of [`LaskaCore.Cluster`](@ref)s, [`LaskaCore.RelativeCluster`](@ref)s are used.
 In these, spike trains relative to trigger event(s) instead of absolute spiketimes are contained.              
-Additionally contains the fields:
 
 Direct field access is **not** recommended. Interface functions include:
 
